@@ -5,10 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Base64;
 import android.util.Log;
 
 import com.amargodigits.helpsms.MainActivity;
 import com.amargodigits.helpsms.model.PhoneReq;
+
+import java.security.SecureRandom;
+import java.util.UUID;
 
 import static com.amargodigits.helpsms.MainActivity.LOG_TAG;
 import static com.amargodigits.helpsms.MainActivity.mAdapter;
@@ -79,7 +83,7 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
                                     cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_COUNT))
                             )
                     );
-                    Log.i(LOG_TAG, "makePhoneReqArrayFromSQLite: " + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_PHONE_NUMBER)));
+                    Log.i(LOG_TAG, "makePhoneReqArrayFromSQLite: " + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_PHONE_NUMBER)) + "-" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_ID))+ "-");
                 } catch (Exception e) {
                     Log.i(LOG_TAG, "makePhoneReqArrayFromSQLite Exception: " + e.toString());
                 }
@@ -94,16 +98,35 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
      **/
     public static void addPhoneReq(PhoneReq phoneReq) {
         ContentValues cv = new ContentValues();
-        cv.put(COLUMN_REQ_ID, phoneReq.getReqId());
+//        cv.put(COLUMN_REQ_ID, phoneReq.getReqId());
+        SecureRandom srand = new SecureRandom();
+        String txt=  srand.nextInt() +""+srand.nextInt();
+        byte[] data = txt.getBytes();
+        String base64 = Base64.encodeToString(data, Base64.URL_SAFE + Base64.NO_PADDING); ;
+        String reqId = base64;
+        cv.put(COLUMN_REQ_ID, reqId);
         cv.put(COLUMN_PHONE_NUMBER, phoneReq.getPhoneNumber());
         cv.put(COLUMN_MD5, phoneReq.getMds5());
         cv.put(COLUMN_DATE, phoneReq.getReqDate());
         cv.put(COLUMN_REQ_COUNT, phoneReq.getReqCount());
-        Log.i(LOG_TAG, "Adding "+  phoneReq.getPhoneNumber());
+        Log.i(LOG_TAG, "Adding "+  phoneReq.getPhoneNumber() + " reqId=" + reqId);
         MainActivity.mDb.insert(ReqContract.ReqEntry.TABLE_NAME, null, cv);
         makePhoneReqArrayFromSQLite(mDb);
         mAdapter.notifyDataSetChanged();
-//        mGridview.setAdapter(mAdapter);
+    }
+
+    /**
+     * addPhoneReq insert the record with "phoneReq" to mDb
+     *
+     * @param phoneReqId -  phone Request Id
+     **/
+    public static void deletePhoneReqID(String phoneReqId) {
+        Log.i(LOG_TAG, "Deleting "+  phoneReqId);
+        String where = COLUMN_REQ_ID + "='" + phoneReqId+"'";
+        Log.i(LOG_TAG, "where to delete =  " + where);
+        MainActivity.mDb.delete(ReqContract.ReqEntry.TABLE_NAME, where, null );
+        makePhoneReqArrayFromSQLite(mDb);
+        mAdapter.notifyDataSetChanged();
     }
     }
 

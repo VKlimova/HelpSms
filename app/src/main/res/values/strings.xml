@@ -14,13 +14,15 @@
     <string name="help">Help</string>
     <string name="left">left</string>
     <string name="right">right</string>
-
+    <string name="ok">OK</string>
+    <string name="cancel">Отмена</string>
     <string name="someimage">Image</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="help1">Делай добро!</string>
     <string name="shareTxt">Поделиться расписанием</string>
     <string name="imporTxt">Введите номер телефона</string>
+    <string name="submenuTxt">Выберите действие</string>
     <string name="json1">+79039606073</string>
     <string name="section_format">Hello World from section: %1$d</string>
 

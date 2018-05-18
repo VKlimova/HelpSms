@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="submenuArray">
+        <item>Отправить еще одно СМС страдальцу</item>
+        <item>Передать инфо об этом потеряшке</item>
+        <item>Удалить потеряшку из списка на этом телефоне</item>
+    </array>
+</resources>
