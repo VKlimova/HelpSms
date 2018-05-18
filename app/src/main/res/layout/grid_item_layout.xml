@@ -18,16 +18,67 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
     android:background="@drawable/grid_color_selector"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="5dp">
 
-    <TextView
-        android:id="@+id/phone_num"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:gravity="left"
-        android:textSize="17sp" />
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/phone_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="start"
+            android:textSize="20sp" />
+        <TextView
+            android:id="@+id/phone_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="start"
+            android:textSize="17sp" />
+    </LinearLayout>
+
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="end">
+
+    <ImageButton
+        android:id="@+id/map_btn"
+        style="@android:style/Widget.Holo.ImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/grid_btn_margin"
+        android:src="@android:drawable/ic_dialog_map" />
+
+    <ImageButton
+        android:id="@+id/submenu_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/grid_btn_margin"
+        android:src="@android:drawable/ic_menu_sort_by_size" />
+    <!--<ImageButton-->
+        <!--android:layout_margin="@dimen/grid_btn_margin"-->
+        <!--android:id="@+id/resend_btn"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@android:drawable/ic_menu_rotate" />-->
+    <!--<ImageButton-->
+        <!--android:layout_margin="@dimen/grid_btn_margin"-->
+        <!--android:id="@+id/share_btn"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@android:drawable/ic_menu_share" />-->
+    <!--<ImageButton-->
+        <!--android:layout_margin="@dimen/grid_btn_margin"-->
+        <!--android:id="@+id/delete_btn"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@android:drawable/ic_menu_delete" />-->
+</LinearLayout>
 
 </LinearLayout>

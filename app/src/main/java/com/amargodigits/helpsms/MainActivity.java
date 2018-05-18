@@ -236,6 +236,4 @@ public static ArrayList<PhoneReq> reqList = new ArrayList<>();
             Log.i(LOG_TAG, "SMS sending exception: phoneNumber=" +phoneNumber+"\nmessage=" + message+ "\nError=" + e.toString());
         }
     }
-
-
 }
