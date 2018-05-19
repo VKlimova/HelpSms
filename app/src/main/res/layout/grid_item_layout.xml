@@ -36,9 +36,16 @@
             android:id="@+id/phone_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
+
             android:gravity="start"
             android:textSize="17sp" />
+        <TextView
+            android:id="@+id/sms_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_marginBottom="5dp"
+            android:gravity="start"/>
     </LinearLayout>
 
 <LinearLayout

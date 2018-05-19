@@ -25,6 +25,7 @@ import static com.amargodigits.helpsms.data.ReqContract.ReqEntry.COLUMN_MD5;
 import static com.amargodigits.helpsms.data.ReqContract.ReqEntry.COLUMN_PHONE_NUMBER;
 import static com.amargodigits.helpsms.data.ReqContract.ReqEntry.COLUMN_REQ_COUNT;
 import static com.amargodigits.helpsms.data.ReqContract.ReqEntry.COLUMN_REQ_ID;
+import static com.amargodigits.helpsms.data.ReqContract.ReqEntry.COLUMN_REQ_SMS_STATUS;
 import static com.amargodigits.helpsms.data.ReqContract.ReqEntry.TABLE_NAME;
 
 public class PhoneReqDbHelper extends SQLiteOpenHelper {
@@ -46,7 +47,8 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
                 + COLUMN_PHONE_NUMBER + " TEXT NOT NULL, "
                 + COLUMN_MD5 + " TEXT NOT NULL, "
                 + COLUMN_DATE + " TEXT NOT NULL, "
-                + COLUMN_REQ_COUNT + " TEXT NOT NULL "
+                + COLUMN_REQ_COUNT + " TEXT NOT NULL, "
+                + COLUMN_REQ_SMS_STATUS + " TEXT NOT NULL"
                 + "); ";
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
     }
@@ -67,7 +69,8 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
                 ReqEntry.COLUMN_PHONE_NUMBER,
                 ReqEntry.COLUMN_MD5,
                 ReqEntry.COLUMN_DATE,
-                ReqEntry.COLUMN_REQ_COUNT
+                ReqEntry.COLUMN_REQ_COUNT,
+                ReqEntry.COLUMN_REQ_SMS_STATUS
         };
 
         String sortOrder = ReqEntry.COLUMN_DATE + " DESC";
@@ -80,7 +83,8 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
                                     cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_PHONE_NUMBER)),
                                     cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_MD5)),
                                     cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_DATE)),
-                                    cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_COUNT))
+                                    cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_COUNT)),
+                                    cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_SMS_STATUS))
                             )
                     );
                     Log.i(LOG_TAG, "makePhoneReqArrayFromSQLite: " + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_PHONE_NUMBER)) + "-" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_ID))+ "-");
@@ -93,10 +97,11 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
 
     /**
      * addPhoneReq insert the record with "phoneReq" to mDb
+     * @Return the ReqID value, generated as random 64-based
      *
      * @param phoneReq -  phone Request data
      **/
-    public static void addPhoneReq(PhoneReq phoneReq) {
+    public static String addPhoneReq(PhoneReq phoneReq) {
         ContentValues cv = new ContentValues();
 //        cv.put(COLUMN_REQ_ID, phoneReq.getReqId());
         SecureRandom srand = new SecureRandom();
@@ -109,17 +114,19 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_MD5, phoneReq.getMds5());
         cv.put(COLUMN_DATE, phoneReq.getReqDate());
         cv.put(COLUMN_REQ_COUNT, phoneReq.getReqCount());
+        cv.put(COLUMN_REQ_SMS_STATUS, phoneReq.getReqSmsStatus());
         Log.i(LOG_TAG, "Adding "+  phoneReq.getPhoneNumber() + " reqId=" + reqId);
         MainActivity.mDb.insert(ReqContract.ReqEntry.TABLE_NAME, null, cv);
         makePhoneReqArrayFromSQLite(mDb);
         mAdapter.notifyDataSetChanged();
+        return reqId;
     }
 
     /**
-     * addPhoneReq insert the record with "phoneReq" to mDb
-     *
+     * addPhoneReq delete the record with "phoneReq" from mDb
      * @param phoneReqId -  phone Request Id
      **/
+
     public static void deletePhoneReqID(String phoneReqId) {
         Log.i(LOG_TAG, "Deleting "+  phoneReqId);
         String where = COLUMN_REQ_ID + "='" + phoneReqId+"'";
@@ -128,5 +135,23 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
         makePhoneReqArrayFromSQLite(mDb);
         mAdapter.notifyDataSetChanged();
     }
+
+
+    /**
+     * addPhoneReq update  the record with "phoneReq" to mDb
+     * @param phoneReqId -  phone Request Id
+     **/
+    public static void updatePhoneReqStatus(String phoneReqId, String phoneReqStatus) {
+        Log.i(LOG_TAG, "Updating "+  phoneReqId + " to " + phoneReqStatus);
+        String where = COLUMN_REQ_ID + "='" + phoneReqId+"'";
+        Log.i(LOG_TAG, "where to update =  " + where);
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_REQ_SMS_STATUS, phoneReqStatus);
+        MainActivity.mDb.update(ReqContract.ReqEntry.TABLE_NAME, cv, where, null );
+        makePhoneReqArrayFromSQLite(mDb);
+        mAdapter.notifyDataSetChanged();
     }
+
+
+}
 

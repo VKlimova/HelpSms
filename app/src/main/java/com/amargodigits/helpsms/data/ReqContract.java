@@ -10,5 +10,6 @@ public  class ReqContract {
         public static final String COLUMN_MD5 = "md5";
         public static final String COLUMN_DATE = "reqDate";
         public static final String COLUMN_REQ_COUNT = "reqCount";
+        public static final String COLUMN_REQ_SMS_STATUS = "reqSmsStatus";
     }
 }

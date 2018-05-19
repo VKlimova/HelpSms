@@ -73,7 +73,7 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
     }
 
     static class ViewHolder {
-        TextView phTitle, phDate;
+        TextView phTitle, phDate, smsStatus;
         ImageButton mapBtn, submenuBtn;
 
 //        ImageView image;
@@ -93,6 +93,7 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
             holder = new ViewHolder();
             holder.phTitle = (TextView) convertView.findViewById(R.id.phone_num);
             holder.phDate = (TextView) convertView.findViewById(R.id.phone_date);
+            holder.smsStatus = (TextView) convertView.findViewById(R.id.sms_status);
             holder.mapBtn = (ImageButton) convertView.findViewById(R.id.map_btn);
             holder.submenuBtn = (ImageButton) convertView.findViewById(R.id.submenu_btn);
             convertView.setTag(holder);
@@ -101,10 +102,10 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
             ;
         }
 
-        String mds5 = currentPhReq.getMds5();
+        //      String mds5 = currentPhReq.getMds5();
 
 
- //       holder.submenuBtn.setOnClickListener(submenuBtnOnClickListener);
+        //       holder.submenuBtn.setOnClickListener(submenuBtnOnClickListener);
 //        holder.mapBtn.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
 //            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -145,18 +146,19 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
         if (mHour < 10) hPref = "0";
         SimpleDateFormat dateFormat = new SimpleDateFormat("LLLL", Locale.getDefault());
         String strMonth = dateFormat.format(dateLong);
-
         String reqDateTime = mDay + " " + strMonth + " " + hPref + mHour + ":" + minPref + mMinute;
+
         holder.phTitle.setText(currentPhReq.getPhoneNumber());
         holder.phDate.setText(reqDateTime);
+        holder.smsStatus.setText(currentPhReq.getReqSmsStatus());
 
- //       holder.mapBtn.setOnClickListener(mapBtnOnClickListener);
-        setOnMapClick(holder.mapBtn,  currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
-        setOnSubmenuClick(holder.submenuBtn,  currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
+        setOnMapClick(holder.mapBtn, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
+        setOnSubmenuClick(holder.submenuBtn, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
+
         return convertView;
     }
 
-    private void setOnMapClick(final ImageButton btn, final String phNum, final String reqId){
+    private void setOnMapClick(final ImageButton btn, final String phNum, final String reqId) {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -168,7 +170,7 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
         });
     }
 
-    private void setOnSubmenuClick(final ImageButton btn, final String phNum, final String reqId){
+    private void setOnSubmenuClick(final ImageButton btn, final String phNum, final String reqId) {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,7 +188,9 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
             }
         });
 
-    };
+    }
+
+    ;
 
     View.OnClickListener submenuBtnOnClickListener = new View.OnClickListener() {
         @Override
@@ -204,9 +208,11 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-            final String phoneNum =getArguments().getString("num");;
-            final String reqId =getArguments().getString("reqId");;
-            String title = getString(R.string.submenuTxt) + " " + phoneNum ;
+            final String phoneNum = getArguments().getString("num");
+            ;
+            final String reqId = getArguments().getString("reqId");
+            ;
+            String title = getString(R.string.submenuTxt) + " " + phoneNum;
             String button1String = "Ok";
             String button2String = "Cancel";
             final ArrayList<Integer> mSelectedItems = new ArrayList();  // Where we track the selected items
