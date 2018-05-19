@@ -22,9 +22,11 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -74,7 +76,9 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
 
     static class ViewHolder {
         TextView phTitle, phDate, smsStatus;
-        ImageButton mapBtn, submenuBtn;
+        ImageButton mapBtn;
+        ImageView submenuBtn;
+        View textLayout, submenuLayout;
 
 //        ImageView image;
     }
@@ -95,13 +99,40 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
             holder.phDate = (TextView) convertView.findViewById(R.id.phone_date);
             holder.smsStatus = (TextView) convertView.findViewById(R.id.sms_status);
             holder.mapBtn = (ImageButton) convertView.findViewById(R.id.map_btn);
-            holder.submenuBtn = (ImageButton) convertView.findViewById(R.id.submenu_btn);
+            holder.submenuBtn = (ImageView) convertView.findViewById(R.id.submenu_btn);
+            holder.textLayout = (View) convertView.findViewById(R.id.textLayout);
+            holder.submenuLayout = (View) convertView.findViewById(R.id.submenuLayout);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
             ;
         }
 
+        switch (currentPhReq.getReqSmsStatus()) {
+            case "Initial":holder.mapBtn.setImageResource(R.drawable.ic_status_sending);
+            break;
+            case "SMS sent":
+                holder.mapBtn.setImageResource(R.drawable.ic_status_ok);
+                break;
+            case "Generic failure":
+                holder.mapBtn.setImageResource(R.drawable.ic_status_error);
+                break;
+            case "No service":
+                holder.mapBtn.setImageResource(R.drawable.ic_status_error);
+                break;
+            case "Null PDU":
+                holder.mapBtn.setImageResource(R.drawable.ic_status_error);
+                break;
+            case "Radio off":
+                holder.mapBtn.setImageResource(R.drawable.ic_status_error);
+                break;
+            case "SMS delivered":
+                holder.mapBtn.setImageResource(R.drawable.ic_status_ok);
+                break;
+            case "SMS not delivered":
+                holder.mapBtn.setImageResource(R.drawable.ic_status_error);
+                break;
+        }
         //      String mds5 = currentPhReq.getMds5();
 
 
@@ -152,13 +183,16 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
         holder.phDate.setText(reqDateTime);
         holder.smsStatus.setText(currentPhReq.getReqSmsStatus());
 
-        setOnMapClick(holder.mapBtn, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
+        setOnMapClick((View) holder.mapBtn, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
+        setOnMapClick((View) holder.textLayout, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
+        setOnMapClick((View) holder.submenuLayout, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
+
         setOnSubmenuClick(holder.submenuBtn, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
 
         return convertView;
     }
 
-    private void setOnMapClick(final ImageButton btn, final String phNum, final String reqId) {
+    private void setOnMapClick(final View btn, final String phNum, final String reqId) {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,7 +204,7 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
         });
     }
 
-    private void setOnSubmenuClick(final ImageButton btn, final String phNum, final String reqId) {
+    private void setOnSubmenuClick(final ImageView btn, final String phNum, final String reqId) {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -20,8 +20,17 @@
     android:background="@drawable/grid_color_selector"
     android:orientation="horizontal"
     android:padding="5dp">
-
+    <ImageButton
+        android:id="@+id/map_btn"
+        style="@android:style/Widget.Holo.ImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/grid_btn_margin"
+        android:src="@drawable/ic_status_sending"
+        android:background="@android:color/transparent"
+        />
     <LinearLayout
+        android:id="@+id/textLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -43,31 +52,25 @@
             android:id="@+id/sms_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorSmsStatus"
             android:layout_marginBottom="5dp"
+            android:textStyle="italic"
             android:gravity="start"/>
     </LinearLayout>
 
 <LinearLayout
+    android:id="@+id/submenuLayout"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="end">
 
-    <ImageButton
-        android:id="@+id/map_btn"
-        style="@android:style/Widget.Holo.ImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/grid_btn_margin"
-        android:src="@android:drawable/ic_dialog_map" />
-
-    <ImageButton
+    <ImageView
         android:id="@+id/submenu_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/grid_btn_margin"
-        android:src="@android:drawable/ic_menu_sort_by_size" />
+        android:src="@drawable/ic_action_name" />
     <!--<ImageButton-->
         <!--android:layout_margin="@dimen/grid_btn_margin"-->
         <!--android:id="@+id/resend_btn"-->

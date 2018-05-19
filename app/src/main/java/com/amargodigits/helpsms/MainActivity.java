@@ -70,18 +70,18 @@ public class MainActivity extends AppCompatActivity {
         // TeaMenuAdapter adapter = new TeaMenuAdapter(this, R.layout.grid_item_layout, teas);
         mAdapter = new PhoneListAdapter(this, R.layout.grid_item_layout, reqList);
         mGridview.setAdapter(mAdapter);
-//        // Set a click listener on that View
-//        mGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-//                PhoneReq item = (PhoneReq) adapterView.getItemAtPosition(position);
-////                String phone = item.getPhoneNumber();
-//                String mds5 = item.getMds5();
-//                Log.i(LOG_TAG, view.toString());
-//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://lazyhome.ru/m/show/?key="+mds5));
-//                startActivity(browserIntent);
-//            }
-//        });
+        // Set a click listener on that View
+        mGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                PhoneReq item = (PhoneReq) adapterView.getItemAtPosition(position);
+//                String phone = item.getPhoneNumber();
+                String mds5 = item.getMds5();
+                Log.i(LOG_TAG, view.toString());
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://lazyhome.ru/m/show/?key="+mds5));
+                startActivity(browserIntent);
+            }
+        });
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -91,16 +91,6 @@ public class MainActivity extends AppCompatActivity {
                 android.app.FragmentManager manager = getFragmentManager();
                 ImportDialogFragment importDialogFragment = new ImportDialogFragment();
                 importDialogFragment.show(manager, "dialog");
-
-//                String number = "+79039606073";  // The number on which you want to send SMS
-////                Snackbar.make(view, "Number="+ number + ", MD5=" + md5(number), Snackbar.LENGTH_LONG)
-////                        .setAction("Action", null).show();
-//                Uri uri = Uri.parse("smsto:" + number);
-//                String link2send="https://lazyhome.ru/m/?code="+md5(number)+"&ph="+number;
-//                Intent it = new Intent(Intent.ACTION_SENDTO, uri);
-//                it.putExtra("sms_body", "Кликните на ссылку, после открытия страницы подтвердите доступ к GPS:\n" + link2send);
-//               startActivity(it);
-
             }
         });
 
@@ -125,9 +115,9 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -162,8 +152,7 @@ public class MainActivity extends AppCompatActivity {
         //  @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-            String title = getString(R.string.impor);
+//            String title = getString(R.string.impor);
             String button1String = "Ok";
             String button2String = "Cancel";
 
@@ -171,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
             LayoutInflater inflater = getActivity().getLayoutInflater();
             View import_view = inflater.inflate(R.layout.import_fragment, null);
             builder.setView(import_view);
-            //           builder.setTitle(title);  // заголовок
             builder.setPositiveButton(button1String, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     Dialog f = (Dialog) dialog;
@@ -179,48 +167,6 @@ public class MainActivity extends AppCompatActivity {
                     Phonetxt = (EditText) f.findViewById(R.id.import_str);
                     String mPhonestr = Phonetxt.getText().toString();
                     send2lost(mPhonestr);
-//                    Log.i(LOG_TAG, "mJSONstr="+mPhonestr);
-////                    String number = "+79039606073";  // The number on which you want to send SMS
-//                    String number = mPhonestr;
-//                    String md5 = md5(number);
-//                    Long curTime = Calendar.getInstance().getTimeInMillis();
-//                    PhoneReq curPhoneReq= new PhoneReq("", number, md5, Long.toString(curTime), "1");
-//                    PhoneReqDbHelper.addPhoneReq(curPhoneReq);
-//                    String link2send="https://lazyhome.ru/m/?code="+ md5 +"&ph="+number;
-//                    String message = "TBOE MECTO HA KAPTE: " + link2send;
-////                    message = link2send;
-////                Snackbar.make(view, "Number="+ number + ", MD5=" + md5(number), Snackbar.LENGTH_LONG)
-////                        .setAction("Action", null).show();
-////                    Uri uri = Uri.parse("smsto:" + number);
-////                    String link2send="https://lazyhome.ru/m/?code="+ md5 +"&ph="+number;
-////                    Intent it = new Intent(Intent.ACTION_SENDTO, uri);
-////                    it.putExtra("sms_body", "Кликните на ссылку, после открытия страницы подтвердите доступ к GPS:\n" + link2send);
-////                    startActivity(it);
-//
-//
-//                    sendSMS(number, message);
-
-//                    class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
-//
-//                        @Override
-//                        protected void onPostExecute(String[] result) {
-//                            super.onPostExecute(result);
-//                        }
-//
-//                        @Override
-//                        protected String[] doInBackground(String... params) {
-//
-//                            if (params.length == 0) {
-//                                return null;
-//                            }
-//                            try {
-//                                Log.i(LOG_TAG, "sending");
-//                            } catch (Exception e) {
-//                                Log.i(LOG_TAG, "exception");
-//                                e.printStackTrace();
-//                            }
-//                            return null;}}
-//                    new FetchWeatherTask().execute("");
                 }
             });
             builder.setNegativeButton(button2String, new DialogInterface.OnClickListener() {
@@ -236,15 +182,12 @@ public class MainActivity extends AppCompatActivity {
 
         String md5 = md5(phoneStr);
         Long curTime = Calendar.getInstance().getTimeInMillis();
-        PhoneReq curPhoneReq = new PhoneReq("", phoneStr, md5, Long.toString(curTime), "1", "INITIAL");
+        PhoneReq curPhoneReq = new PhoneReq("", phoneStr, md5, Long.toString(curTime), "1", "Initial");
         String reqId = PhoneReqDbHelper.addPhoneReq(curPhoneReq);
         String link2send = "https://lazyhome.ru/s/?key=" + md5 + "&ph=" + phoneStr;
         String message = "TBOE MECTO HA KAPTE: " + link2send;
         sendSMS(phoneStr, message, reqId);
-
     }
-
-    ;
 
     public static void sendSMS2(String phoneNumber, String message) {
         SmsManager sms = SmsManager.getDefault();
@@ -257,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //---sends an SMS message to another device---
+    //---sends an SMS message
     private static void sendSMS(String phoneNumber, String message, final String reqId) {
         String SENT = "SMS_SENT";
         String DELIVERED = "SMS_DELIVERED";
