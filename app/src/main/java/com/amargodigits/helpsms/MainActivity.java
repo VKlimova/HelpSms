@@ -12,13 +12,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,20 +26,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
-
 import com.amargodigits.helpsms.data.PhoneReqDbHelper;
+import com.amargodigits.helpsms.model.JsonReq;
 import com.amargodigits.helpsms.model.PhoneReq;
+import com.amargodigits.helpsms.utils.NetworkUtils;
 
-import java.net.URL;
+import java.io.UTFDataFormatException;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -50,11 +46,13 @@ import static com.amargodigits.helpsms.data.PhoneReqDbHelper.makePhoneReqArrayFr
 public class MainActivity extends AppCompatActivity {
     public static String LOG_TAG = "Help SMS Log";
     public static ArrayList<PhoneReq> reqList = new ArrayList<>();
+    public static ArrayList<JsonReq> mJReq = new ArrayList<>();
     public static SQLiteDatabase mDb;
     public static PhoneReqDbHelper dbHelper;
     public static PhoneListAdapter mAdapter;
     public static GridView mGridview;
     public static Context mContext;
+    public static SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,26 +61,17 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mContext = getApplicationContext();
+        // Creating grid from database
         dbHelper = new PhoneReqDbHelper(this);
         mDb = dbHelper.getWritableDatabase();
         makePhoneReqArrayFromSQLite(mDb);
         mGridview = (GridView) findViewById(R.id.phonelist_view);
-        // TeaMenuAdapter adapter = new TeaMenuAdapter(this, R.layout.grid_item_layout, teas);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         mAdapter = new PhoneListAdapter(this, R.layout.grid_item_layout, reqList);
         mGridview.setAdapter(mAdapter);
-        // Set a click listener on that View
-        mGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                PhoneReq item = (PhoneReq) adapterView.getItemAtPosition(position);
-//                String phone = item.getPhoneNumber();
-                String mds5 = item.getMds5();
-                Log.i(LOG_TAG, view.toString());
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://lazyhome.ru/m/show/?key="+mds5));
-                startActivity(browserIntent);
-            }
-        });
+        // eof creating grid from database
 
+        updateGridFromJson();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +87,45 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 0);
         }
+
+        /*
+         * Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked when the user
+         * performs a swipe-to-refresh gesture.
+         */
+        mSwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
+                        updateGridFromJson();
+                        // This method performs the actual data-refresh operation.
+                        // The method calls setRefreshing(false) when it's finished.
+                        //        myUpdateOperation();
+                    }
+                }
+        );
     }
+
+    //
+    // Creating array from Json and updating database
+    //
+    public void updateGridFromJson(){
+        Log.i(LOG_TAG, "updateGridFromJson");
+        for (int i = 0; (i < reqList.size()); i++)
+            try {
+            String key = reqList.get(i).getReqId();
+            NetworkUtils.LoadJsonReqTask mAsyncTasc = new NetworkUtils.LoadJsonReqTask(getApplicationContext());
+            mAsyncTasc.execute(key);
+        } catch (Exception e) {
+            Log.i(LOG_TAG, "Loading data exception: " + e.toString());
+        }
+    }
+
+public static void doGridView(JsonReq jsonReq){
+        //TOD update db with jsonReq
+        mAdapter.notifyDataSetChanged();
+    mSwipeRefreshLayout.setRefreshing(false);
+}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -149,10 +176,8 @@ public class MainActivity extends AppCompatActivity {
 
     //       I M P O R T     d i a l o g
     public static class ImportDialogFragment extends DialogFragment {
-        //  @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-//            String title = getString(R.string.impor);
             String button1String = "Ok";
             String button2String = "Cancel";
 
@@ -163,10 +188,12 @@ public class MainActivity extends AppCompatActivity {
             builder.setPositiveButton(button1String, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     Dialog f = (Dialog) dialog;
-                    EditText Phonetxt;
-                    Phonetxt = (EditText) f.findViewById(R.id.import_str);
+                    EditText Phonetxt, Aliastxt;
+                    Phonetxt = (EditText) f.findViewById(R.id.telnum_str);
+                    Aliastxt = (EditText) f.findViewById(R.id.alias_str);
                     String mPhonestr = Phonetxt.getText().toString();
-                    send2lost(mPhonestr);
+                    String aliasStr = Aliastxt.getText().toString();
+                    send2lost(aliasStr, mPhonestr);
                 }
             });
             builder.setNegativeButton(button2String, new DialogInterface.OnClickListener() {
@@ -178,26 +205,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static void send2lost(String phoneStr) {
-
+    //
+    // Sends Sms, add a record to Db
+    //
+    public static void send2lost(String alias, String phoneStr) {
         String md5 = md5(phoneStr);
         Long curTime = Calendar.getInstance().getTimeInMillis();
-        PhoneReq curPhoneReq = new PhoneReq("", phoneStr, md5, Long.toString(curTime), "1", "Initial");
+        PhoneReq curPhoneReq = new PhoneReq("", alias, phoneStr, md5, Long.toString(curTime), "1", "Initial", "", "");
         String reqId = PhoneReqDbHelper.addPhoneReq(curPhoneReq);
-        String link2send = "https://lazyhome.ru/s/?key=" + md5 + "&ph=" + phoneStr;
+        String link2send = "https://lazyhome.ru/s/?alias=" + URLEncoder.encode(  alias )+ "&key=" + reqId;
         String message = "TBOE MECTO HA KAPTE: " + link2send;
-        sendSMS(phoneStr, message, reqId);
-    }
-
-    public static void sendSMS2(String phoneNumber, String message) {
-        SmsManager sms = SmsManager.getDefault();
-        Log.i(LOG_TAG, "SMS sending: message length=" + message.length());
-        try {
-            sms.sendTextMessage(phoneNumber, null, message, null, null);
-            Log.i(LOG_TAG, "SMS sending: phoneNumber=" + phoneNumber + "\nmessage=" + message);
-        } catch (Exception e) {
-            Log.i(LOG_TAG, "SMS sending exception: phoneNumber=" + phoneNumber + "\nmessage=" + message + "\nError=" + e.toString());
-        }
+        Log.i(LOG_TAG, "SMS to send: " + message);
+//        sendSMS(phoneStr, message, reqId);
     }
 
     //---sends an SMS message
@@ -246,10 +265,10 @@ public class MainActivity extends AppCompatActivity {
                 String resultCode = "";
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
-                        resultCode ="SMS delivered";
+                        resultCode = "SMS delivered";
                         break;
                     case Activity.RESULT_CANCELED:
-                        resultCode ="SMS not delivered";
+                        resultCode = "SMS not delivered";
                         break;
                 }
                 PhoneReqDbHelper.updatePhoneReqStatus(reqId, resultCode);
@@ -259,5 +278,4 @@ public class MainActivity extends AppCompatActivity {
         SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
     }
-
 }

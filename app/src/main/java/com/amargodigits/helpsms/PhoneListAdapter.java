@@ -75,7 +75,7 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
     }
 
     static class ViewHolder {
-        TextView phTitle, phDate, smsStatus;
+        TextView phTitle, phDate, smsStatus, alias, jsonTimestamp, jsonStatus;
         ImageButton mapBtn;
         ImageView submenuBtn;
         View textLayout, submenuLayout;
@@ -98,6 +98,9 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
             holder.phTitle = (TextView) convertView.findViewById(R.id.phone_num);
             holder.phDate = (TextView) convertView.findViewById(R.id.phone_date);
             holder.smsStatus = (TextView) convertView.findViewById(R.id.sms_status);
+            holder.alias = (TextView) convertView.findViewById(R.id.alias);
+            holder.jsonStatus = (TextView) convertView.findViewById(R.id.json_status);
+            holder.jsonTimestamp = (TextView) convertView.findViewById(R.id.json_timestamp);
             holder.mapBtn = (ImageButton) convertView.findViewById(R.id.map_btn);
             holder.submenuBtn = (ImageView) convertView.findViewById(R.id.submenu_btn);
             holder.textLayout = (View) convertView.findViewById(R.id.textLayout);
@@ -109,8 +112,9 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
         }
 
         switch (currentPhReq.getReqSmsStatus()) {
-            case "Initial":holder.mapBtn.setImageResource(R.drawable.ic_status_sending);
-            break;
+            case "Initial":
+                holder.mapBtn.setImageResource(R.drawable.ic_status_sending);
+                break;
             case "SMS sent":
                 holder.mapBtn.setImageResource(R.drawable.ic_status_ok);
                 break;
@@ -126,6 +130,9 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
             case "Radio off":
                 holder.mapBtn.setImageResource(R.drawable.ic_status_error);
                 break;
+            case "On map":
+                holder.mapBtn.setImageResource(R.drawable.ic_status_place);
+                break;
             case "SMS delivered":
                 holder.mapBtn.setImageResource(R.drawable.ic_status_ok);
                 break;
@@ -133,64 +140,55 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
                 holder.mapBtn.setImageResource(R.drawable.ic_status_error);
                 break;
         }
-        //      String mds5 = currentPhReq.getMds5();
 
-
-        //       holder.submenuBtn.setOnClickListener(submenuBtnOnClickListener);
-//        holder.mapBtn.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-//                PhoneReq item = (PhoneReq) adapterView.getItemAtPosition(position);
-////                String phone = item.getPhoneNumber();
-//                String mds5 = item.getMds5();
-//                Log.i(LOG_TAG, view.toString());
-//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://lazyhome.ru/m/show/?code="+mds5));
-//                startActivity(browserIntent);
-//            }
-//        });
-
-//        (new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-//                PhoneReq item = (PhoneReq) adapterView.getItemAtPosition(position);
-////                String phone = item.getPhoneNumber();
-//                String mds5 = item.getMds5();
-//                Log.i(LOG_TAG, view.toString());
-//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://lazyhome.ru/m/show/?code="+mds5));
-//                getContext().startActivity(browserIntent);
-//            }
-//        });
-
-
-        Calendar calendar = Calendar.getInstance();
-        long dateLong = Long.parseLong(currentPhReq.getReqDate());
-        calendar.setTimeInMillis(dateLong);
-
-        int mYear = calendar.get(Calendar.YEAR);
-        int mMonth = calendar.get(Calendar.MONTH);
-        int mDay = calendar.get(Calendar.DAY_OF_MONTH);
-        int mHour = calendar.get(Calendar.HOUR_OF_DAY);
-        int mMinute = calendar.get(Calendar.MINUTE);
-        String minPref = "";
-        if (mMinute < 10) minPref = "0";
-        String hPref = "";
-        if (mHour < 10) hPref = "0";
-        SimpleDateFormat dateFormat = new SimpleDateFormat("LLLL", Locale.getDefault());
-        String strMonth = dateFormat.format(dateLong);
-        String reqDateTime = mDay + " " + strMonth + " " + hPref + mHour + ":" + minPref + mMinute;
 
         holder.phTitle.setText(currentPhReq.getPhoneNumber());
-        holder.phDate.setText(reqDateTime);
+
+        String reqDateTime = dateTimeString(Long.parseLong(currentPhReq.getReqDate()));
+
+        holder.phDate.setText("SMS: " + reqDateTime);
         holder.smsStatus.setText(currentPhReq.getReqSmsStatus());
+        holder.alias.setText(currentPhReq.getAlias());
+        holder.jsonStatus.setText(currentPhReq.getJsonStatus());
+        holder.jsonTimestamp.setText("JSON: ");
+try {
+        String jsonDateTime = dateTimeString(Long.parseLong(currentPhReq.getJsonTimestamp()));
+            holder.jsonTimestamp.setText("JSON: " + jsonDateTime);
+}
+catch (Exception e) {
+    Log.i(LOG_TAG, " jsonDateTime Exception " + e.toString());
+}
+
+        Log.i(LOG_TAG, "holder.alias =" + currentPhReq.getAlias());
+        Log.i(LOG_TAG, "holder.jsonTimestamp =" + currentPhReq.getJsonTimestamp());
 
         setOnMapClick((View) holder.mapBtn, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
         setOnMapClick((View) holder.textLayout, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
         setOnMapClick((View) holder.submenuLayout, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
 
-        setOnSubmenuClick(holder.submenuBtn, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
+        setOnSubmenuClick(holder.submenuBtn, currentPhReq.getAlias(), currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
 
         return convertView;
     }
+
+    public String dateTimeString(Long dateTimeLong)
+    {
+    Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(dateTimeLong);
+//    int mYear = calendar.get(Calendar.YEAR);
+//    int mMonth = calendar.get(Calendar.MONTH);
+    int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+    int mHour = calendar.get(Calendar.HOUR_OF_DAY);
+    int mMinute = calendar.get(Calendar.MINUTE);
+    String minPref = "";
+        if(mMinute< 10)minPref ="0";
+    String hPref = "";
+        if(mHour< 10)hPref ="0";
+    SimpleDateFormat dateFormat = new SimpleDateFormat("LLLL", Locale.getDefault());
+    String strMonth = dateFormat.format(dateTimeLong);
+    String dateTimeString = mDay + " " + strMonth + " " + hPref + mHour + ":" + minPref + mMinute;
+    return dateTimeString;
+}
 
     private void setOnMapClick(final View btn, final String phNum, final String reqId) {
         btn.setOnClickListener(new View.OnClickListener() {
@@ -204,16 +202,17 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
         });
     }
 
-    private void setOnSubmenuClick(final ImageView btn, final String phNum, final String reqId) {
+    private void setOnSubmenuClick(final ImageView btn, final String alias, final String phNum, final String reqId) {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Do whatever you want(str can be used here)
-                Log.i(LOG_TAG, "setOnSubmenuClick " + phNum);
+                Log.i(LOG_TAG, "setOnSubmenuClick " + phNum + " " + alias);
                 android.app.FragmentManager manager = ((MainActivity) mContext).getFragmentManager();
                 SubmenuDialogFragment submenuDialogFragment = new SubmenuDialogFragment();
                 // Supply num input as an argument.
                 Bundle args = new Bundle();
+                args.putString("alias", alias);
                 args.putString("num", phNum);
                 args.putString("reqId", reqId);
                 submenuDialogFragment.setArguments(args);
@@ -242,11 +241,10 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+            final String alias = getArguments().getString("alias");
             final String phoneNum = getArguments().getString("num");
-            ;
             final String reqId = getArguments().getString("reqId");
-            ;
-            String title = getString(R.string.submenuTxt) + " " + phoneNum;
+            String title = getString(R.string.submenuTxt) + " " + phoneNum + " " + alias;
             String button1String = "Ok";
             String button2String = "Cancel";
             final ArrayList<Integer> mSelectedItems = new ArrayList();  // Where we track the selected items
@@ -262,13 +260,13 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
                             int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
                             switch (selectedPosition) {
                                 case 0:
-                                    MainActivity.send2lost(phoneNum);
+                                    MainActivity.send2lost(alias, phoneNum);
                                     break;
                                 case 1:
                                     doShare(phoneNum, "https://lazyhome.ru/s/show/?key=" + reqId + "&ph=" + phoneNum);
                                     break;
                                 case 2:
-                                    deletePhoneReqID(phoneNum);
+                                    deletePhoneReqID(reqId);
                                     break;
                             }
                         }

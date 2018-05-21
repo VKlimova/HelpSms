@@ -35,19 +35,26 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/phone_num"
+            android:id="@+id/alias"
+            android:text="@string/default_alias"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:gravity="start"
             android:textSize="20sp" />
         <TextView
+            android:id="@+id/phone_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="start"
+             />
+        <TextView
             android:id="@+id/phone_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:gravity="start"
-            android:textSize="17sp" />
+             />
         <TextView
             android:id="@+id/sms_status"
             android:layout_width="wrap_content"
@@ -56,6 +63,21 @@
             android:layout_marginBottom="5dp"
             android:textStyle="italic"
             android:gravity="start"/>
+        <TextView
+            android:id="@+id/json_timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            />
+        <TextView
+            android:id="@+id/json_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorSmsStatus"
+            android:layout_marginBottom="5dp"
+            android:textStyle="italic"
+            android:gravity="start"/>
+
     </LinearLayout>
 
 <LinearLayout
@@ -71,24 +93,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/grid_btn_margin"
         android:src="@drawable/ic_action_name" />
-    <!--<ImageButton-->
-        <!--android:layout_margin="@dimen/grid_btn_margin"-->
-        <!--android:id="@+id/resend_btn"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:src="@android:drawable/ic_menu_rotate" />-->
-    <!--<ImageButton-->
-        <!--android:layout_margin="@dimen/grid_btn_margin"-->
-        <!--android:id="@+id/share_btn"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:src="@android:drawable/ic_menu_share" />-->
-    <!--<ImageButton-->
-        <!--android:layout_margin="@dimen/grid_btn_margin"-->
-        <!--android:id="@+id/delete_btn"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:src="@android:drawable/ic_menu_delete" />-->
+
 </LinearLayout>
 
 </LinearLayout>

@@ -7,6 +7,11 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swiperefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <GridView
         android:id="@+id/phonelist_view"
         android:layout_width="fill_parent"
@@ -20,7 +25,7 @@
         android:numColumns="1"
         android:stretchMode="columnWidth"
         android:verticalSpacing="5dp" />
-
+    </android.support.v4.widget.SwipeRefreshLayout>
     <!--<TextView-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->

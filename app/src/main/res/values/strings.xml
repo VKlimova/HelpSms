@@ -21,8 +21,10 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="help1">Делай добро!</string>
     <string name="shareTxt">Поделиться расписанием</string>
-    <string name="imporTxt">Введите номер телефона</string>
+    <string name="aliasTxt">Введите псевдоним</string>
+    <string name="telnumTxt">и номер телефона</string>
     <string name="submenuTxt">Выберите действие</string>
+    <string name="default_alias">Вася</string>
     <string name="json1">+79039606073</string>
     <string name="section_format">Hello World from section: %1$d</string>
 

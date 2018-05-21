@@ -18,11 +18,23 @@
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="@string/imporTxt"
+        android:text="@string/aliasTxt"
         />
     <EditText
-        android:id="@+id/import_str"
+        android:id="@+id/alias_str"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/default_alias"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="@string/telnumTxt"
+        />
+    <EditText
+        android:id="@+id/telnum_str"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/json1"/>
+
     </LinearLayout>
