@@ -1,4 +1,4 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="grid_btn_margin">4dp</dimen>
+    <dimen name="grid_btn_margin">7dp</dimen>
 </resources>

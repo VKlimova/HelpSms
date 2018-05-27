@@ -34,7 +34,6 @@ import com.amargodigits.helpsms.model.JsonReq;
 import com.amargodigits.helpsms.model.PhoneReq;
 import com.amargodigits.helpsms.utils.NetworkUtils;
 
-import java.io.UTFDataFormatException;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -45,6 +44,7 @@ import static com.amargodigits.helpsms.data.PhoneReqDbHelper.makePhoneReqArrayFr
 
 public class MainActivity extends AppCompatActivity {
     public static String LOG_TAG = "Help SMS Log";
+    public static String lastReqId="";
     public static ArrayList<PhoneReq> reqList = new ArrayList<>();
     public static ArrayList<JsonReq> mJReq = new ArrayList<>();
     public static SQLiteDatabase mDb;
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 android.app.FragmentManager manager = getFragmentManager();
-                ImportDialogFragment importDialogFragment = new ImportDialogFragment();
+                SendSmsDialogFragment importDialogFragment = new SendSmsDialogFragment();
                 importDialogFragment.show(manager, "dialog");
             }
         });
@@ -98,9 +98,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onRefresh() {
                         Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
                         updateGridFromJson();
-                        // This method performs the actual data-refresh operation.
-                        // The method calls setRefreshing(false) when it's finished.
-                        //        myUpdateOperation();
                     }
                 }
         );
@@ -110,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     // Creating array from Json and updating database
     //
     public void updateGridFromJson(){
-        Log.i(LOG_TAG, "updateGridFromJson");
+//        Log.i(LOG_TAG, "updateGridFromJson");
         for (int i = 0; (i < reqList.size()); i++)
             try {
             String key = reqList.get(i).getReqId();
@@ -123,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
 public static void doGridView(JsonReq jsonReq){
         //TOD update db with jsonReq
-        mAdapter.notifyDataSetChanged();
+    mAdapter.notifyDataSetChanged();
     mSwipeRefreshLayout.setRefreshing(false);
 }
 
@@ -142,11 +139,40 @@ public static void doGridView(JsonReq jsonReq){
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
+        if (id == R.id.action_help) {
+            AlertDialog.Builder aboutbuilder = new AlertDialog.Builder(MainActivity.this);
+            AlertDialog alert = aboutbuilder.create();
 
-        return super.onOptionsItemSelected(item);
+            aboutbuilder.setTitle(getString(R.string.app_name)+ " " + BuildConfig.VERSION_NAME)
+                    .setMessage(getString(R.string.help_string) +
+                                    "\n\n(c)AmargoDigits\namargodigits@gmail.com")
+                    .setIcon(R.mipmap.ic_launcher)
+                    .setCancelable(true)
+                    .setNegativeButton("ОК",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+            //               AlertDialog
+            alert = aboutbuilder.create();
+            alert.show();
+            return true;
+        }
+
+        if (id == R.id.action_jrefresh){
+            mSwipeRefreshLayout.setRefreshing(true); // %(
+            Toast.makeText(mContext, "Refreshing...", Toast.LENGTH_SHORT).show();
+            updateGridFromJson();
+        }
+
+        if (id==R.id.action_addreq){
+            android.app.FragmentManager manager = getFragmentManager();
+            ImportDialogFragment importDialogFragment = new ImportDialogFragment();
+            importDialogFragment.show(manager, "dialog");
+        }
+
+            return super.onOptionsItemSelected(item);
     }
 
     public static final String md5(final String s) {
@@ -174,8 +200,8 @@ public static void doGridView(JsonReq jsonReq){
         return "";
     }
 
-    //       I M P O R T     d i a l o g
-    public static class ImportDialogFragment extends DialogFragment {
+    //      S e n d   S M S    d i a l o g
+    public static class SendSmsDialogFragment extends DialogFragment {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             String button1String = "Ok";
@@ -183,7 +209,7 @@ public static void doGridView(JsonReq jsonReq){
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             LayoutInflater inflater = getActivity().getLayoutInflater();
-            View import_view = inflater.inflate(R.layout.import_fragment, null);
+            View import_view = inflater.inflate(R.layout.send_sms_fragment, null);
             builder.setView(import_view);
             builder.setPositiveButton(button1String, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -205,55 +231,97 @@ public static void doGridView(JsonReq jsonReq){
         }
     }
 
+
+    //       I M P O R T     d i a l o g
+    public static class ImportDialogFragment extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            String button1String = "Ok";
+            String button2String = "Cancel";
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            View import_view = inflater.inflate(R.layout.import_sms_fragment, null);
+            builder.setView(import_view);
+            builder.setPositiveButton(button1String, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    Dialog f = (Dialog) dialog;
+
+                    EditText Codetxt = (EditText) f.findViewById(R.id.code_str);
+                    String codeStr = Codetxt.getText().toString();
+                    Long curTime = Calendar.getInstance().getTimeInMillis();
+
+                    PhoneReq curPhoneReq = new PhoneReq("", "", "", "",Long.toString(curTime), "1", "200", "", "");
+                    PhoneReqDbHelper.addPhoneReqId(curPhoneReq, codeStr);
+//                    send2lost(aliasStr, mPhonestr);
+                }
+            });
+            builder.setNegativeButton(button2String, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            });
+            builder.setCancelable(true);
+            return builder.create();
+        }
+    }
+
     //
     // Sends Sms, add a record to Db
     //
     public static void send2lost(String alias, String phoneStr) {
         String md5 = md5(phoneStr);
         Long curTime = Calendar.getInstance().getTimeInMillis();
-        PhoneReq curPhoneReq = new PhoneReq("", alias, phoneStr, md5, Long.toString(curTime), "1", "Initial", "", "");
+        PhoneReq curPhoneReq = new PhoneReq("", alias, phoneStr, md5, Long.toString(curTime), "1", "100", "", "");
         String reqId = PhoneReqDbHelper.addPhoneReq(curPhoneReq);
-        String link2send = "https://lazyhome.ru/s/?alias=" + URLEncoder.encode(  alias )+ "&key=" + reqId;
+        String link2send = mContext.getString(R.string.lazyhome_link) + "?alias=" + URLEncoder.encode(  alias )+ "&key=" + reqId;
         String message = "TBOE MECTO HA KAPTE: " + link2send;
         Log.i(LOG_TAG, "SMS to send: " + message);
-//        sendSMS(phoneStr, message, reqId);
+        sendSMS(phoneStr, message, reqId);
     }
 
     //---sends an SMS message
     private static void sendSMS(String phoneNumber, String message, final String reqId) {
         String SENT = "SMS_SENT";
         String DELIVERED = "SMS_DELIVERED";
-
+        lastReqId=reqId;
+        Intent sentIntent= new Intent(SENT);
+//        sentIntent.putExtra("reqId", reqId);
         PendingIntent sentPI = PendingIntent.getBroadcast(mContext, 0,
-                new Intent(SENT), 0);
+                sentIntent, 0);
+
+        Intent deliveredIntent = new Intent(DELIVERED);
+//        deliveredIntent.putExtra("reqId", reqId);
 
         PendingIntent deliveredPI = PendingIntent.getBroadcast(mContext, 0,
-                new Intent(DELIVERED), 0);
+                deliveredIntent, 0);
 
         //---when the SMS has been sent---
         mContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
-                String resultCode = "";
+                String textCode="";
+                        String resultCode = String.valueOf(getResultCode());
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
-                        resultCode = "SMS sent";
+                        textCode = mContext.getString(R.string.RESULT_OK_SENT);
                         break;
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                        resultCode = "Generic failure";
+                        textCode = mContext.getString(R.string.RESULT_ERROR_GENERIC_FAILURE);
                         break;
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
-                        resultCode = "No service";
+                        textCode = mContext.getString(R.string.RESULT_ERROR_NO_SERVICE);
                         break;
                     case SmsManager.RESULT_ERROR_NULL_PDU:
-                        resultCode = "Null PDU";
+                        textCode = mContext.getString(R.string.RESULT_ERROR_NULL_PDU);
                         break;
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
-                        resultCode = "Radio off";
+                        textCode = mContext.getString(R.string.RESULT_ERROR_RADIO_OFF);
                         break;
                 }
+
                 PhoneReqDbHelper.updatePhoneReqStatus(reqId, resultCode);
-                Toast.makeText(mContext, resultCode, Toast.LENGTH_LONG).show();
+                Log.i(LOG_TAG, "SMS Sending -->  " + resultCode + " : " + textCode);
+                Toast.makeText(mContext, resultCode+ " : " + textCode, Toast.LENGTH_LONG).show();
 
             }
         }, new IntentFilter(SENT));
@@ -262,19 +330,25 @@ public static void doGridView(JsonReq jsonReq){
         mContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
-                String resultCode = "";
+                String textCode="", resultCode = "";
+
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
-                        resultCode = "SMS delivered";
+                        textCode = mContext.getString(R.string.RESULT_OK_DELIVERED);
+                        resultCode="-2";
                         break;
                     case Activity.RESULT_CANCELED:
-                        resultCode = "SMS not delivered";
+                        textCode = mContext.getString(R.string.RESULT_CANCELED);
                         break;
                 }
+
                 PhoneReqDbHelper.updatePhoneReqStatus(reqId, resultCode);
-                Toast.makeText(mContext, resultCode, Toast.LENGTH_LONG).show();
+                Log.i(LOG_TAG, "SMS Delivery  -->  " + resultCode + " : " + textCode);
+                Toast.makeText(mContext, textCode, Toast.LENGTH_LONG).show();
             }
         }, new IntentFilter(DELIVERED));
+
+
         SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
     }

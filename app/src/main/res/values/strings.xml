@@ -23,9 +23,35 @@
     <string name="shareTxt">Поделиться расписанием</string>
     <string name="aliasTxt">Введите псевдоним</string>
     <string name="telnumTxt">и номер телефона</string>
+    <string name="codeTxt">Введите код</string>
     <string name="submenuTxt">Выберите действие</string>
     <string name="default_alias">Вася</string>
     <string name="json1">+79039606073</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <!-- SMS Manager messages -->
+    <string name="smsMgr">SMS sending</string>
+    <string name="Initial">Sending...</string>
+    <string name="Imported">Imported</string>
+    <string name="RESULT_OK_SENT">SMS sent</string>
+    <string name="RESULT_ERROR_GENERIC_FAILURE">Generic failure</string>
+    <string name="RESULT_ERROR_NO_SERVICE">No service</string>
+    <string name="RESULT_ERROR_NULL_PDU">Null PDU</string>
+    <string name="RESULT_ERROR_RADIO_OFF">Radio off</string>
+    <string name="RESULT_OK_DELIVERED">SMS delivered</string>
+    <string name="RESULT_CANCELED">SMS not delivered</string>
+    <!--JSon messages-->
+    <string name="jsonSite">Site interactions</string>
+    <string name="code0">Site not visited</string>;
+    <string name="code1">Success - coords detected</string>
+    <string name="codeminus1">Failure: no permission given</string>
+    <string name="codeminus2">Failure: phone do not support GPS</string>
 
+    <string name="lazyhome_link">https://lazyhome.ru/s/</string>
+<string name="about">"HelpSms" (с) AmargoDigits</string>
+    <string name="help_string">Нажмите на оранжевый конвертик, введите номер телефона.
+        Приложение отправит СМС со ссылкой на страницу для определения GPS-координат.
+        Когда абонент откроет ссылку, ему будет необходимо подтвердить разрешение на доступ к GPS в браузере.
+        После этого его координаты будут зафиксированы.
+        На экране приложения можно наблюдать статус отправки СМС и действий абонента.
+    </string>
 </resources>

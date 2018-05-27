@@ -23,7 +23,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/Applications/Android%20Studio%202.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_assignment_turned_in_black_24dp.xml" />
+                                                <entry key="url" value="jar:file:/Applications/Android%20Studio%202.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/maps/ic_transfer_within_a_station_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -33,8 +33,9 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="outputName" value="ic_status_ok" />
-                                      <entry key="themeColor" value="107e3f" />
+                                      <entry key="outputName" value="ic_status_human" />
+                                      <entry key="theme" value="CUSTOM" />
+                                      <entry key="themeColor" value="66b8e2" />
                                     </map>
                                   </option>
                                 </PersistentState>

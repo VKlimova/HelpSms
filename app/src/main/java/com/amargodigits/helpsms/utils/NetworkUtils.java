@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 
 import com.amargodigits.helpsms.MainActivity;
+import com.amargodigits.helpsms.R;
 import com.amargodigits.helpsms.model.JsonReq;
 import com.amargodigits.helpsms.model.PhoneReq;
 
@@ -22,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import static com.amargodigits.helpsms.MainActivity.LOG_TAG;
+import static com.amargodigits.helpsms.MainActivity.mContext;
 import static com.amargodigits.helpsms.data.PhoneReqDbHelper.updateJsonStatus;
+
 
 
 public class NetworkUtils {
@@ -31,7 +34,7 @@ public class NetworkUtils {
      */
 
     public static URL buildReqUrl(String key) {
-        Uri builtUri = Uri.parse("https://lazyhome.ru/s/get/?key="+key).buildUpon().build();
+        Uri builtUri = Uri.parse(mContext.getString(R.string.lazyhome_link) + "get/?key="+key).buildUpon().build();
         URL url = null;
         try {
             url = new URL(builtUri.toString());
@@ -87,10 +90,10 @@ public class NetworkUtils {
                 try {
                     String key=params[0];
                     URL scheduleRequestUrl = NetworkUtils.buildReqUrl(key);
-                    Log.i(LOG_TAG, " scheduleRequestUrl="+ scheduleRequestUrl);
+//                    Log.i(LOG_TAG, " scheduleRequestUrl="+ scheduleRequestUrl);
                     String jsonResponse = NetworkUtils
                             .getResponseFromHttpUrl(scheduleRequestUrl);
-                    Log.i(LOG_TAG, " jsonResponse="+ jsonResponse);
+//                    Log.i(LOG_TAG, " jsonResponse="+ jsonResponse);
                     jsonReq = Json.getTimestampFromJson(key, jsonResponse);
                     return jsonReq;
                 } catch (Exception e) {
@@ -108,7 +111,7 @@ public class NetworkUtils {
             super.onPostExecute(jsonReq);
             updateJsonStatus(jsonReq);
             MainActivity.doGridView(jsonReq);
-            Log.i(LOG_TAG, "  onPostExecute before return jsonReqID=" + jsonReq.getReqId() + " jsonReqTimestamp=" + jsonReq.getTimestamp() );
+//            Log.i(LOG_TAG, "  onPostExecute before return jsonReqID=" + jsonReq.getReqId() + " jsonReqTimestamp=" + jsonReq.getTimestamp() );
             return;
         }
     }

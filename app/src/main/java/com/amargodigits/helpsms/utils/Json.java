@@ -17,24 +17,24 @@ public class Json {
      */
     public static JsonReq getTimestampFromJson(String key, String rawJsonStr)
             throws JSONException {
-        Log.i(LOG_TAG, "rawJsonStr=" + rawJsonStr);
+//        Log.i(LOG_TAG, "rawJsonStr=" + rawJsonStr);
         String timestamp="";
         String jsonStatus = "";
         try {
             JSONObject jsonObject = new JSONObject(rawJsonStr);
             timestamp = jsonObject.getString("timestamp");
-            Log.i(LOG_TAG, "timestamp=" + timestamp);
+//            Log.i(LOG_TAG, "timestamp=" + timestamp);
         } catch (Exception e) {
-            Log.i(LOG_TAG, "Caught JSon exception parsing:" + e.toString());
+//            Log.i(LOG_TAG, "Caught JSon exception parsing:" + e.toString());
         }
 
         try {
             JSONObject jsonObject = new JSONObject(rawJsonStr);
             String jsonStatus1 = jsonObject.getString("status");
-            Log.i(LOG_TAG, "jsonStatus jsonStatus1=" + jsonStatus1);
+//            Log.i(LOG_TAG, "jsonStatus jsonStatus1=" + jsonStatus1);
             JSONObject jsonObjectVal = new JSONObject(jsonStatus1);
             jsonStatus = jsonObjectVal.getString("val");
-            Log.i(LOG_TAG, "jsonStatus val=" + jsonStatus);
+//            Log.i(LOG_TAG, "jsonStatus val=" + jsonStatus);
         } catch (Exception e) {
             Log.i(LOG_TAG, "Caught JSon exception parsing status:" + e.toString());
         }

@@ -53,6 +53,7 @@ import java.util.Locale;
 
 import static com.amargodigits.helpsms.MainActivity.LOG_TAG;
 
+import static com.amargodigits.helpsms.MainActivity.mContext;
 import static com.amargodigits.helpsms.data.PhoneReqDbHelper.deletePhoneReqID;
 
 /**
@@ -76,7 +77,7 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
 
     static class ViewHolder {
         TextView phTitle, phDate, smsStatus, alias, jsonTimestamp, jsonStatus;
-        ImageButton mapBtn;
+        ImageButton smsBtn, mapBtn;
         ImageView submenuBtn;
         View textLayout, submenuLayout;
 
@@ -101,102 +102,167 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
             holder.alias = (TextView) convertView.findViewById(R.id.alias);
             holder.jsonStatus = (TextView) convertView.findViewById(R.id.json_status);
             holder.jsonTimestamp = (TextView) convertView.findViewById(R.id.json_timestamp);
-            holder.mapBtn = (ImageButton) convertView.findViewById(R.id.map_btn);
+            holder.smsBtn = (ImageButton) convertView.findViewById(R.id.sms_btn);
+//            holder.mapBtn = (ImageButton) convertView.findViewById(R.id.sms_btn);
             holder.submenuBtn = (ImageView) convertView.findViewById(R.id.submenu_btn);
             holder.textLayout = (View) convertView.findViewById(R.id.textLayout);
-            holder.submenuLayout = (View) convertView.findViewById(R.id.submenuLayout);
+//            holder.submenuLayout = (View) convertView.findViewById(R.id.submenuLayout);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
             ;
         }
+        try {
+            holder.phTitle.setText(currentPhReq.getPhoneNumber());
+        } catch (Exception e) {
+        }
+        try {
+            String reqDateTime = dateTimeString(Long.parseLong(currentPhReq.getReqDate()));
+            holder.phDate.setText(mContext.getString(R.string.smsMgr) + ": " + reqDateTime);
+        } catch (Exception e) {
+        }
+        String jStatusCode;// = "0";
 
-        switch (currentPhReq.getReqSmsStatus()) {
-            case "Initial":
-                holder.mapBtn.setImageResource(R.drawable.ic_status_sending);
-                break;
-            case "SMS sent":
-                holder.mapBtn.setImageResource(R.drawable.ic_status_ok);
-                break;
-            case "Generic failure":
-                holder.mapBtn.setImageResource(R.drawable.ic_status_error);
-                break;
-            case "No service":
-                holder.mapBtn.setImageResource(R.drawable.ic_status_error);
-                break;
-            case "Null PDU":
-                holder.mapBtn.setImageResource(R.drawable.ic_status_error);
-                break;
-            case "Radio off":
-                holder.mapBtn.setImageResource(R.drawable.ic_status_error);
-                break;
-            case "On map":
-                holder.mapBtn.setImageResource(R.drawable.ic_status_place);
-                break;
-            case "SMS delivered":
-                holder.mapBtn.setImageResource(R.drawable.ic_status_ok);
-                break;
-            case "SMS not delivered":
-                holder.mapBtn.setImageResource(R.drawable.ic_status_error);
-                break;
+        try {
+            holder.alias.setText(currentPhReq.getAlias());
+        } catch (Exception e) {
+        }
+        try {
+            jStatusCode = currentPhReq.getJsonStatus();
+        } catch (Exception e) {
+            jStatusCode="0";
         }
 
+        String smsStatus = "";
+        try {
+            smsStatus = currentPhReq.getReqSmsStatus();
+        } catch (Exception e) {
+        }
 
-        holder.phTitle.setText(currentPhReq.getPhoneNumber());
+        switch (smsStatus.trim()) {
+            case "100":
+                holder.smsBtn.setImageResource(R.drawable.ic_status_sending);
+                holder.smsStatus.setText(mContext.getString(R.string.Initial));
+                break;
+            case "200":
+                holder.smsBtn.setImageResource(R.drawable.ic_status_wait);
+                holder.smsStatus.setText(mContext.getString(R.string.Imported));
+                jsonStatus(jStatusCode, holder.smsBtn, holder.jsonStatus, holder.jsonTimestamp);
+                break;
+//            case "SMS sent":
+//                holder.smsBtn.setImageResource(R.drawable.ic_status_ok);
+//                holder.smsStatus.setText(mContext.getString(R.string.RESULT_OK_SENT));
+//                break;
+            case "1":
+                holder.smsBtn.setImageResource(R.drawable.ic_status_error);
+                holder.smsStatus.setText(mContext.getString(R.string.RESULT_ERROR_GENERIC_FAILURE));
+                break;
+            case "4":
+                holder.smsBtn.setImageResource(R.drawable.ic_status_error);
+                holder.smsStatus.setText(mContext.getString(R.string.RESULT_ERROR_NO_SERVICE));
+                break;
+            case "3":
+                holder.smsBtn.setImageResource(R.drawable.ic_status_error);
+                holder.smsStatus.setText(mContext.getString(R.string.RESULT_ERROR_NULL_PDU));
+                break;
+            case "2":
+                holder.smsBtn.setImageResource(R.drawable.ic_status_error);
+                holder.smsStatus.setText(mContext.getString(R.string.RESULT_ERROR_RADIO_OFF));
+                break;
+            case "On map":
+                holder.smsBtn.setImageResource(R.drawable.ic_status_place);
+                break;
 
-        String reqDateTime = dateTimeString(Long.parseLong(currentPhReq.getReqDate()));
+            case "-1": // sms sent
+                holder.smsStatus.setText("SMS status: " + mContext.getString(R.string.RESULT_OK_SENT));
+                holder.smsBtn.setImageResource(R.drawable.ic_status_ok);
+                jsonStatus(jStatusCode, holder.smsBtn, holder.jsonStatus, holder.jsonTimestamp);
+//                Log.i(LOG_TAG, "  S M S    S T A T U S    -1  ============================");
+                break;
 
-        holder.phDate.setText("SMS: " + reqDateTime);
-        holder.smsStatus.setText(currentPhReq.getReqSmsStatus());
-        holder.alias.setText(currentPhReq.getAlias());
-        holder.jsonStatus.setText(currentPhReq.getJsonStatus());
-        holder.jsonTimestamp.setText("JSON: ");
-try {
-        String jsonDateTime = dateTimeString(Long.parseLong(currentPhReq.getJsonTimestamp()));
-            holder.jsonTimestamp.setText("JSON: " + jsonDateTime);
-}
-catch (Exception e) {
-    Log.i(LOG_TAG, " jsonDateTime Exception " + e.toString());
-}
+            case "-2":       // delivered sms
+                holder.smsStatus.setText("SMS status: " + mContext.getString(R.string.RESULT_OK_DELIVERED));
+                holder.smsBtn.setImageResource(R.drawable.ic_status_ok);
+                jsonStatus(jStatusCode, holder.smsBtn, holder.jsonStatus, holder.jsonTimestamp);
+//                Log.i(LOG_TAG, "  S M S    S T A T U S    -2  ============================");
+                break;
 
-        Log.i(LOG_TAG, "holder.alias =" + currentPhReq.getAlias());
-        Log.i(LOG_TAG, "holder.jsonTimestamp =" + currentPhReq.getJsonTimestamp());
+//            case "SMS not delivered":
+//                holder.smsBtn.setImageResource(R.drawable.ic_status_error);
+//                break;
+        }
 
-        setOnMapClick((View) holder.mapBtn, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
-        setOnMapClick((View) holder.textLayout, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
-        setOnMapClick((View) holder.submenuLayout, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
-
-        setOnSubmenuClick(holder.submenuBtn, currentPhReq.getAlias(), currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
-
+        try {
+//            Log.i(LOG_TAG, "holder.alias =" + currentPhReq.getAlias());
+            setOnMapClick((View) holder.smsBtn, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
+            setOnMapClick((View) holder.textLayout, currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
+            setOnSubmenuClick(holder.submenuBtn, currentPhReq.getAlias(), currentPhReq.getPhoneNumber(), currentPhReq.getReqId());
+        } catch (Exception e) {
+        }
         return convertView;
     }
 
-    public String dateTimeString(Long dateTimeLong)
-    {
-    Calendar calendar = Calendar.getInstance();
+    public String dateTimeString(Long dateTimeLong) {
+        Calendar calendar = Calendar.getInstance();
+        if ((dateTimeLong==null) || (dateTimeLong==0) || (dateTimeLong.equals(null))) return "";
         calendar.setTimeInMillis(dateTimeLong);
 //    int mYear = calendar.get(Calendar.YEAR);
 //    int mMonth = calendar.get(Calendar.MONTH);
-    int mDay = calendar.get(Calendar.DAY_OF_MONTH);
-    int mHour = calendar.get(Calendar.HOUR_OF_DAY);
-    int mMinute = calendar.get(Calendar.MINUTE);
-    String minPref = "";
-        if(mMinute< 10)minPref ="0";
-    String hPref = "";
-        if(mHour< 10)hPref ="0";
-    SimpleDateFormat dateFormat = new SimpleDateFormat("LLLL", Locale.getDefault());
-    String strMonth = dateFormat.format(dateTimeLong);
-    String dateTimeString = mDay + " " + strMonth + " " + hPref + mHour + ":" + minPref + mMinute;
-    return dateTimeString;
-}
+        int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int mHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int mMinute = calendar.get(Calendar.MINUTE);
+        String minPref = "";
+        if (mMinute < 10) minPref = "0";
+        String hPref = "";
+        if (mHour < 10) hPref = "0";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("LLLL", Locale.getDefault());
+        String strMonth = dateFormat.format(dateTimeLong);
+        String dateTimeString = mDay + " " + strMonth + " " + hPref + mHour + ":" + minPref + mMinute;
+        return dateTimeString;
+    }
+
+    public void jsonStatus(String jStatusCode, ImageButton smsBtn, TextView jsonStatus, TextView jsonTimestamp) {
+        String jStatusStr = "";
+        switch (jStatusCode) {
+            case "0":
+                jStatusStr = mContext.getString(R.string.code0);
+                smsBtn.setImageResource(R.drawable.ic_status_human);
+                break;
+            case "1":
+                jStatusStr = mContext.getString(R.string.code1);
+                smsBtn.setImageResource(R.drawable.ic_status_place);
+                break;
+            case "-1":
+                jStatusStr = mContext.getString(R.string.codeminus1);
+                smsBtn.setImageResource(R.drawable.ic_status_error);
+                break;
+            case "-2":
+                jStatusStr = mContext.getString(R.string.codeminus2);
+                smsBtn.setImageResource(R.drawable.ic_status_error);
+                break;
+        }
+
+        try {
+            String jsonDateTime = ""; // dateTimeString(Long.parseLong(currentPhReq.getJsonTimestamp()));
+            jsonTimestamp.setText(mContext.getString(R.string.jsonSite) + ": " + jsonDateTime);
+        } catch (Exception e) {
+            Log.i(LOG_TAG, " jsonDateTime Exception " + e.toString());
+        }
+
+        if (jStatusCode.length() > 0) {
+            jsonStatus.setText(jStatusStr);
+        }
+
+    }
+
+    ;
+
 
     private void setOnMapClick(final View btn, final String phNum, final String reqId) {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Do whatever you want(str can be used here)
-                Log.i(LOG_TAG, "setOnMapClick " + phNum);
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://lazyhome.ru/s/show/?key=" + reqId));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mContext.getString(R.string.lazyhome_link) + "show/?key=" + reqId));
                 getContext().startActivity(browserIntent);
             }
         });
@@ -207,7 +273,6 @@ catch (Exception e) {
             @Override
             public void onClick(View v) {
                 // Do whatever you want(str can be used here)
-                Log.i(LOG_TAG, "setOnSubmenuClick " + phNum + " " + alias);
                 android.app.FragmentManager manager = ((MainActivity) mContext).getFragmentManager();
                 SubmenuDialogFragment submenuDialogFragment = new SubmenuDialogFragment();
                 // Supply num input as an argument.
@@ -263,10 +328,14 @@ catch (Exception e) {
                                     MainActivity.send2lost(alias, phoneNum);
                                     break;
                                 case 1:
-                                    doShare(phoneNum, "https://lazyhome.ru/s/show/?key=" + reqId + "&ph=" + phoneNum);
+                                    doShare(phoneNum, mContext.getString(R.string.lazyhome_link) + "show/?key=" + reqId + "&ph=" + phoneNum);
                                     break;
                                 case 2:
                                     deletePhoneReqID(reqId);
+                                    break;
+                                case 3:
+                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mContext.getString(R.string.lazyhome_link) + "show/?key=" + reqId));
+                                    mContext.startActivity(browserIntent);
                                     break;
                             }
                         }

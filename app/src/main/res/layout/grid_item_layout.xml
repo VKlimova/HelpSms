@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--Copyright (C) 2017 The Android Open Source Project
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-  	http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.-->
 
-<!--Layout for a GridView item in the Menu Activity-->
+<!--Layout for a GridView item in the Main Activity-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/grid_item_layout"
@@ -20,15 +10,32 @@
     android:background="@drawable/grid_color_selector"
     android:orientation="horizontal"
     android:padding="5dp">
-    <ImageButton
-        android:id="@+id/map_btn"
-        style="@android:style/Widget.Holo.ImageButton"
+
+    <!--Layout for sms btn and info-->
+
+    <LinearLayout
+        android:id="@+id/btnLayout"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/grid_btn_margin"
-        android:src="@drawable/ic_status_sending"
-        android:background="@android:color/transparent"
-        />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/sms_btn"
+            style="@android:style/Widget.Holo.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/grid_btn_margin"
+            android:src="@drawable/ic_status_sending"
+            android:background="@android:color/transparent"
+            />
+        <!--<ImageButton-->
+            <!--android:id="@+id/map_btn"-->
+            <!--style="@android:style/Widget.Holo.ImageButton"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_margin="@dimen/grid_btn_margin"-->
+            <!--android:background="@android:color/transparent"-->
+            <!--android:src="@android:drawable/ic_menu_mapmode" />-->
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/textLayout"
         android:layout_width="wrap_content"
@@ -63,10 +70,12 @@
             android:layout_marginBottom="5dp"
             android:textStyle="italic"
             android:gravity="start"/>
+
         <TextView
             android:id="@+id/json_timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text=""
             android:gravity="start"
             />
         <TextView
@@ -76,24 +85,21 @@
             android:textColor="@color/colorSmsStatus"
             android:layout_marginBottom="5dp"
             android:textStyle="italic"
+            android:text=""
             android:gravity="start"/>
-
-    </LinearLayout>
-
-<LinearLayout
-    android:id="@+id/submenuLayout"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="end">
-
+            </LinearLayout>
+    <LinearLayout
+        android:id="@+id/submenuLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
     <ImageView
         android:id="@+id/submenu_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/grid_btn_margin"
         android:src="@drawable/ic_action_name" />
-
+    </LinearLayout>
 </LinearLayout>
 
-</LinearLayout>
