@@ -90,7 +90,7 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
 
         ViewHolder holder = null;
         currentPhReq = getItem(position);
-
+Log.i(LOG_TAG, "currentPhReq " + currentPhReq.getJsonStatus() + " " + currentPhReq.getJsonTimestamp());
         if (convertView == null) {
             // If it's not recycled, initialize some attributes
             LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
@@ -120,8 +120,9 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
             String reqDateTime = dateTimeString(Long.parseLong(currentPhReq.getReqDate()));
             holder.phDate.setText(mContext.getString(R.string.smsMgr) + ": " + reqDateTime);
         } catch (Exception e) {
+            Log.i(LOG_TAG, "Sms timestsmp exception :" + e.toString());
         }
-        String jStatusCode;// = "0";
+        String jStatusCode= "0";
 
         try {
             holder.alias.setText(currentPhReq.getAlias());
@@ -243,10 +244,10 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
         }
 
         try {
-            String jsonDateTime = ""; // dateTimeString(Long.parseLong(currentPhReq.getJsonTimestamp()));
+            String jsonDateTime = dateTimeString(Long.parseLong(currentPhReq.getJsonTimestamp()));
             jsonTimestamp.setText(mContext.getString(R.string.jsonSite) + ": " + jsonDateTime);
         } catch (Exception e) {
-            Log.i(LOG_TAG, " jsonDateTime Exception " + e.toString());
+//            Log.i(LOG_TAG, " jsonDateTime Exception " + e.toString());
         }
 
         if (jStatusCode.length() > 0) {
@@ -282,13 +283,9 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
                 args.putString("reqId", reqId);
                 submenuDialogFragment.setArguments(args);
                 submenuDialogFragment.show(manager, "dialog");
-
             }
         });
-
     }
-
-    ;
 
     View.OnClickListener submenuBtnOnClickListener = new View.OnClickListener() {
         @Override
@@ -296,7 +293,6 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
             android.app.FragmentManager manager = ((MainActivity) mContext).getFragmentManager();
             SubmenuDialogFragment submenuDialogFragment = new SubmenuDialogFragment();
             submenuDialogFragment.show(manager, "dialog");
-
         }
     };
 

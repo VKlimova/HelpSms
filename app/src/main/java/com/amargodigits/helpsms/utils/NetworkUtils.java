@@ -90,11 +90,12 @@ public class NetworkUtils {
                 try {
                     String key=params[0];
                     URL scheduleRequestUrl = NetworkUtils.buildReqUrl(key);
-//                    Log.i(LOG_TAG, " scheduleRequestUrl="+ scheduleRequestUrl);
+                    Log.i(LOG_TAG, " scheduleRequestUrl="+ scheduleRequestUrl);
                     String jsonResponse = NetworkUtils
                             .getResponseFromHttpUrl(scheduleRequestUrl);
-//                    Log.i(LOG_TAG, " jsonResponse="+ jsonResponse);
-                    jsonReq = Json.getTimestampFromJson(key, jsonResponse);
+                    Log.i(LOG_TAG, " jsonResponse="+ jsonResponse);
+                   try{ jsonReq = Json.getTimestampFromJson(key, jsonResponse);}
+                   catch (Exception e) {Log.i(LOG_TAG, " Json.getTimestampFromJson="+ e.toString());};
                     return jsonReq;
                 } catch (Exception e) {
                     Log.i(LOG_TAG, "Error importing JSON: " + e.toString());
@@ -111,7 +112,10 @@ public class NetworkUtils {
             super.onPostExecute(jsonReq);
             updateJsonStatus(jsonReq);
             MainActivity.doGridView(jsonReq);
-//            Log.i(LOG_TAG, "  onPostExecute before return jsonReqID=" + jsonReq.getReqId() + " jsonReqTimestamp=" + jsonReq.getTimestamp() );
+            try {
+            Log.i(LOG_TAG, "  onPostExecute before return jsonReqID=" + jsonReq.getReqId() + " jsonReqTimestamp=" + jsonReq.getTimestamp() );
+            }catch (Exception e) {
+                Log.i(LOG_TAG, "Error onPostExecute log: " + e.toString());}
             return;
         }
     }

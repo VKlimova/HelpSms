@@ -106,9 +106,10 @@ public class MainActivity extends AppCompatActivity {
     // Creating array from Json and updating database
     //
     public void updateGridFromJson(){
-        Log.i(LOG_TAG, "updateGridFromJson");
+        Log.i(LOG_TAG, "updateGridFromJson reqList.size()=" + reqList.size());
         for (int i = 0; (i < reqList.size()); i++)
             try {
+            Log.i(LOG_TAG, "updateGridFromJson i=" + i);
             String key = reqList.get(i).getReqId();
             NetworkUtils.LoadJsonReqTask mAsyncTasc = new NetworkUtils.LoadJsonReqTask(getApplicationContext());
             mAsyncTasc.execute(key);
@@ -257,9 +258,9 @@ public static void doGridView(JsonReq jsonReq){
                     String codeStr = Codetxt.getText().toString();
                     Long curTime = Calendar.getInstance().getTimeInMillis();
 
-                    PhoneReq curPhoneReq = new PhoneReq("", "", "", "",Long.toString(curTime), "1", "200", "", "");
+                    PhoneReq curPhoneReq = new PhoneReq("", "", "", "", Long.toString(curTime), "1", "200", "", "0");
                     PhoneReqDbHelper.addPhoneReqId(curPhoneReq, codeStr);
-//                    send2lost(aliasStr, mPhonestr);
+
                 }
             });
             builder.setNegativeButton(button2String, new DialogInterface.OnClickListener() {

@@ -240,18 +240,18 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
      * @param jsonReq -  jsonReq with info to update in mDb
      **/
     public static void updateJsonStatus(JsonReq jsonReq) {
-//        Log.i(LOG_TAG, "updateJsonStatus. Updating "+  jsonReq.getReqId() + " timestamp to " + jsonReq.getTimestamp() + " Json Status " + jsonReq.getJsonStatus());
         try {
+            Log.i(LOG_TAG, "updateJsonStatus. Updating "+  jsonReq.getReqId() + " timestamp to " + jsonReq.getTimestamp() + " Json Status " + jsonReq.getJsonStatus());
             String where = COLUMN_REQ_ID + "='" + jsonReq.getReqId().trim() + "'";
-//        Log.i(LOG_TAG, "where to update =  " + where);
+        Log.i(LOG_TAG, "where to update =  " + where);
             ContentValues cv = new ContentValues();
             cv.put(COLUMN_JSON_TIMESTAMP, jsonReq.getTimestamp());
             cv.put(COLUMN_JSON_STATUS, jsonReq.getJsonStatus());
     int i = MainActivity.mDb.update(ReqContract.ReqEntry.TABLE_NAME, cv, where, null);
- //   Log.i(LOG_TAG, " Updated " + i + " records");
+    Log.i(LOG_TAG, " Updated " + i + " records");
 }
 catch (Exception e)
-{Log.i(LOG_TAG, "Exception updating JsonStatus: " +e.toString());
+{Log.i(LOG_TAG, "Exception updating JsonStatus: " + e.toString());
 }
        makePhoneReqArrayFromSQLite(mDb);
         mAdapter.notifyDataSetChanged();
