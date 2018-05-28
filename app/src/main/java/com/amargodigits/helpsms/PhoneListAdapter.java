@@ -262,7 +262,7 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mContext.getString(R.string.lazyhome_link) + "show/?key=" + reqId));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mContext.getString(R.string.share_link) + reqId));
                 getContext().startActivity(browserIntent);
             }
         });
@@ -328,13 +328,14 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
                                     MainActivity.send2lost(alias, phoneNum);
                                     break;
                                 case 1:
-                                    doShare(phoneNum, mContext.getString(R.string.lazyhome_link) + "show/?key=" + reqId + "&ph=" + phoneNum);
+//                                    doShare(phoneNum, mContext.getString(R.string.lazyhome_link) + "show/?key=" + reqId + "&ph=" + phoneNum);
+                                    doShare(phoneNum, alias + ": " + phoneNum + " "+ mContext.getString(R.string.share_link) + reqId);
                                     break;
                                 case 2:
                                     deletePhoneReqID(reqId);
                                     break;
                                 case 3:
-                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mContext.getString(R.string.lazyhome_link) + "show/?key=" + reqId));
+                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mContext.getString(R.string.share_link)  + reqId));
                                     mContext.startActivity(browserIntent);
                                     break;
                             }

@@ -34,7 +34,7 @@ public class NetworkUtils {
      */
 
     public static URL buildReqUrl(String key) {
-        Uri builtUri = Uri.parse(mContext.getString(R.string.lazyhome_link) + "get/?key="+key).buildUpon().build();
+        Uri builtUri = Uri.parse(mContext.getString(R.string.get_link) +key).buildUpon().build();
         URL url = null;
         try {
             url = new URL(builtUri.toString());

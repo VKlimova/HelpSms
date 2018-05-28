@@ -275,7 +275,8 @@ public static void doGridView(JsonReq jsonReq){
         Long curTime = Calendar.getInstance().getTimeInMillis();
         PhoneReq curPhoneReq = new PhoneReq("", alias, phoneStr, md5, Long.toString(curTime), "1", "100", "", "");
         String reqId = PhoneReqDbHelper.addPhoneReq(curPhoneReq);
-        String link2send = mContext.getString(R.string.lazyhome_link) + "?alias=" + URLEncoder.encode(  alias )+ "&key=" + reqId;
+//        String link2send = mContext.getString(R.string.lazyhome_link) + "?alias=" + URLEncoder.encode(  alias )+ "&key=" + reqId;
+        String link2send = mContext.getString(R.string.get_link)  + reqId;
         String message = "TBOE MECTO HA KAPTE: " + link2send;
         Log.i(LOG_TAG, "SMS to send: " + message);
         sendSMS(phoneStr, message, reqId);

@@ -45,8 +45,15 @@
     <string name="code1">Success - coords detected</string>
     <string name="codeminus1">Failure: no permission given</string>
     <string name="codeminus2">Failure: phone do not support GPS</string>
+    <!--
+    <string name="sms_link">https://lazyhome.ru/s/?key=</string>
+    <string name="share_link">https://lazyhome.ru/s/show/?key=</string>
+    <string name="get_link">https://lazyhome.ru/s/get/?key=</string>
+     -->
+    <string name="sms_link">https://couchdb.cloudno.de/finder/s/find.html?</string>
+    <string name="share_link">https://couchdb.cloudno.de/finder/s/show.html?</string>
+    <string name="get_link">https://couchdb.cloudno.de/finder/s/</string>
 
-    <string name="lazyhome_link">https://lazyhome.ru/s/</string>
 <string name="about">"HelpSms" (с) AmargoDigits</string>
     <string name="help_string">Нажмите на оранжевый конвертик, введите номер телефона.
         Приложение отправит СМС со ссылкой на страницу для определения GPS-координат.
