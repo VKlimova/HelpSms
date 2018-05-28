@@ -52,7 +52,7 @@
      -->
     <string name="sms_link">https://couchdb.cloudno.de/finder/s/find.html?</string>
     <string name="share_link">https://couchdb.cloudno.de/finder/s/show.html?</string>
-    <string name="get_link">https://couchdb.cloudno.de/finder/s/</string>
+    <string name="get_link">https://couchdb.cloudno.de/finder/</string>
 
 <string name="about">"HelpSms" (с) AmargoDigits</string>
     <string name="help_string">Нажмите на оранжевый конвертик, введите номер телефона.

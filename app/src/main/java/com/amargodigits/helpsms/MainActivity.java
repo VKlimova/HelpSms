@@ -70,8 +70,7 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new PhoneListAdapter(this, R.layout.grid_item_layout, reqList);
         mGridview.setAdapter(mAdapter);
         // eof creating grid from database
-
-        updateGridFromJson();
+    updateGridFromJson();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +116,12 @@ public class MainActivity extends AppCompatActivity {
                 mSwipeRefreshLayout.setRefreshing(false);
             Log.i(LOG_TAG, "Loading data exception: " + e.toString());
         }
-        mSwipeRefreshLayout.setRefreshing(false);
+        try {
+        mSwipeRefreshLayout.setRefreshing(false);}
+        catch (Exception e) {
+        Log.i(LOG_TAG, "updateGridFromJson exception "+ e.toString());
+        }
+
     }
 
 public static void doGridView(JsonReq jsonReq){
@@ -276,7 +280,7 @@ public static void doGridView(JsonReq jsonReq){
         PhoneReq curPhoneReq = new PhoneReq("", alias, phoneStr, md5, Long.toString(curTime), "1", "100", "", "");
         String reqId = PhoneReqDbHelper.addPhoneReq(curPhoneReq);
 //        String link2send = mContext.getString(R.string.lazyhome_link) + "?alias=" + URLEncoder.encode(  alias )+ "&key=" + reqId;
-        String link2send = mContext.getString(R.string.get_link)  + reqId;
+        String link2send = mContext.getString(R.string.sms_link)  + reqId;
         String message = "TBOE MECTO HA KAPTE: " + link2send;
         Log.i(LOG_TAG, "SMS to send: " + message);
         sendSMS(phoneStr, message, reqId);

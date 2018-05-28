@@ -241,12 +241,12 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
      **/
     public static void updateJsonStatus(JsonReq jsonReq) {
 //        Log.i(LOG_TAG, "updateJsonStatus. Updating "+  jsonReq.getReqId() + " timestamp to " + jsonReq.getTimestamp() + " Json Status " + jsonReq.getJsonStatus());
-        String where = COLUMN_REQ_ID + "='" + jsonReq.getReqId().trim() + "'";
+        try {
+            String where = COLUMN_REQ_ID + "='" + jsonReq.getReqId().trim() + "'";
 //        Log.i(LOG_TAG, "where to update =  " + where);
-        ContentValues cv = new ContentValues();
-        cv.put(COLUMN_JSON_TIMESTAMP, jsonReq.getTimestamp());
-        cv.put(COLUMN_JSON_STATUS, jsonReq.getJsonStatus());
-try {
+            ContentValues cv = new ContentValues();
+            cv.put(COLUMN_JSON_TIMESTAMP, jsonReq.getTimestamp());
+            cv.put(COLUMN_JSON_STATUS, jsonReq.getJsonStatus());
     int i = MainActivity.mDb.update(ReqContract.ReqEntry.TABLE_NAME, cv, where, null);
  //   Log.i(LOG_TAG, " Updated " + i + " records");
 }
