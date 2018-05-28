@@ -107,15 +107,17 @@ public class MainActivity extends AppCompatActivity {
     // Creating array from Json and updating database
     //
     public void updateGridFromJson(){
-//        Log.i(LOG_TAG, "updateGridFromJson");
+        Log.i(LOG_TAG, "updateGridFromJson");
         for (int i = 0; (i < reqList.size()); i++)
             try {
             String key = reqList.get(i).getReqId();
             NetworkUtils.LoadJsonReqTask mAsyncTasc = new NetworkUtils.LoadJsonReqTask(getApplicationContext());
             mAsyncTasc.execute(key);
         } catch (Exception e) {
+                mSwipeRefreshLayout.setRefreshing(false);
             Log.i(LOG_TAG, "Loading data exception: " + e.toString());
         }
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
 public static void doGridView(JsonReq jsonReq){
@@ -280,25 +282,54 @@ public static void doGridView(JsonReq jsonReq){
     }
 
     //---sends an SMS message
-    private static void sendSMS(String phoneNumber, String message, final String reqId) {
+    private static void sendSMS(String phoneNumber, String message, String reqId) {
         String SENT = "SMS_SENT";
         String DELIVERED = "SMS_DELIVERED";
         lastReqId=reqId;
+        final Integer reqCode= Integer.parseInt(reqId.replaceAll("[\\D]", ""));
+
         Intent sentIntent= new Intent(SENT);
-//        sentIntent.putExtra("reqId", reqId);
-        PendingIntent sentPI = PendingIntent.getBroadcast(mContext, 0,
-                sentIntent, 0);
+        /** Sms is sent to this number */
+        sentIntent.putExtra("number", phoneNumber);
+        sentIntent.putExtra("reqId", reqId);
+
+        /** Setting status data on the intent */
+        sentIntent.putExtra("status", SENT);
+
+//            sentIntent.setAction("action1");
+            PendingIntent sentPI = PendingIntent.getBroadcast(mContext, reqCode,
+                    sentIntent, PendingIntent.FLAG_ONE_SHOT);
 
         Intent deliveredIntent = new Intent(DELIVERED);
-//        deliveredIntent.putExtra("reqId", reqId);
+//            deliveredIntent.setAction("action2");
+        /** Sms is sent to this number */
+        deliveredIntent.putExtra("number", phoneNumber);
+        Log.i(LOG_TAG, "putExtra reqId=" + reqId);
+        deliveredIntent.putExtra("reqId", reqId);
+        /** Setting status data on the intent */
+        deliveredIntent.putExtra("status", DELIVERED);
 
-        PendingIntent deliveredPI = PendingIntent.getBroadcast(mContext, 0,
-                deliveredIntent, 0);
+            PendingIntent deliveredPI = PendingIntent.getBroadcast(mContext, reqCode,
+                    deliveredIntent, PendingIntent.FLAG_ONE_SHOT);
 
-        //---when the SMS has been sent---
+
+        // /---when the SMS has been sent---
         mContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
+
+    Bundle data = arg1.getExtras();
+
+    /** Getting the data "status" from the bundle object */
+    String status = data.getString("status");
+
+    /** Getting the data "number" from the bundle object */
+    String number = data.getString("number");
+
+    String extraReqId = data.getString("reqId");
+
+    Log.i(LOG_TAG, "onRecieve intent number="+number + " extraReqId=" + extraReqId );
+
                 String textCode="";
                         String resultCode = String.valueOf(getResultCode());
                 switch (getResultCode()) {
@@ -319,9 +350,9 @@ public static void doGridView(JsonReq jsonReq){
                         break;
                 }
 
-                PhoneReqDbHelper.updatePhoneReqStatus(reqId, resultCode);
-                Log.i(LOG_TAG, "SMS Sending -->  " + resultCode + " : " + textCode);
-                Toast.makeText(mContext, resultCode+ " : " + textCode, Toast.LENGTH_LONG).show();
+                PhoneReqDbHelper.updatePhoneReqStatus(extraReqId, resultCode);
+                Log.i(LOG_TAG, "SMS Sending -->  " + resultCode + " : " + textCode + " " + extraReqId + " " + reqCode + " extraReqId=" + extraReqId);
+                Toast.makeText(mContext, resultCode+ " : " + textCode + " " + extraReqId + " " + reqCode, Toast.LENGTH_LONG).show();
 
             }
         }, new IntentFilter(SENT));
@@ -330,6 +361,16 @@ public static void doGridView(JsonReq jsonReq){
         mContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
+
+                Bundle data = arg1.getExtras();
+
+                /** Getting the data "status" from the bundle object */
+                String status = data.getString("status");
+
+                /** Getting the data "number" from the bundle object */
+                String number = data.getString("number");
+
+                String extraReqId = data.getString("reqId");
                 String textCode="", resultCode = "";
 
                 switch (getResultCode()) {
@@ -342,14 +383,15 @@ public static void doGridView(JsonReq jsonReq){
                         break;
                 }
 
-                PhoneReqDbHelper.updatePhoneReqStatus(reqId, resultCode);
-                Log.i(LOG_TAG, "SMS Delivery  -->  " + resultCode + " : " + textCode);
-                Toast.makeText(mContext, textCode, Toast.LENGTH_LONG).show();
+                PhoneReqDbHelper.updatePhoneReqStatus(extraReqId, resultCode);
+                Log.i(LOG_TAG, "SMS Delivery  -->  " + resultCode + " : " + textCode + " " + extraReqId + " " + reqCode);
+                Toast.makeText(mContext, textCode+ " " + extraReqId + " " + reqCode, Toast.LENGTH_LONG).show();
             }
         }, new IntentFilter(DELIVERED));
 
 
         SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
+
     }
 }

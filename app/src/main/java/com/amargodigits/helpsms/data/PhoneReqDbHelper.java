@@ -101,14 +101,14 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
                             cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_JSON_STATUS))
                             )
                     );
-                    Log.i(LOG_TAG, "makePhoneReqArrayFromSQLite: " +
-                            cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_ALIAS)) +" " +
-                            cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_PHONE_NUMBER)) +
-//                            "-" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_ID))+ "-" +
-                            " json status=" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_JSON_STATUS))+ " " +
-                            " sms status=" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_SMS_STATUS))+ " "
-//                            + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_JSON_TIMESTAMP))
-                    );
+//                    Log.i(LOG_TAG, "makePhoneReqArrayFromSQLite: " +
+//                            cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_ALIAS)) +" " +
+//                            cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_PHONE_NUMBER)) +
+////                            "-" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_ID))+ "-" +
+//                            " json status=" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_JSON_STATUS))+ " " +
+//                            " sms status=" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_SMS_STATUS))+ " "
+////                            + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_JSON_TIMESTAMP))
+//                    );
                 } catch (Exception e) {
                     Log.i(LOG_TAG, "makePhoneReqArrayFromSQLite Exception: " + e.toString());
                 }
@@ -199,33 +199,35 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
      **/
     public static void updatePhoneReqStatus(String phoneReqId, String phoneReqStatus) {
         Log.i(LOG_TAG, "Updating "+  phoneReqId + " to " + phoneReqStatus);
-        if (!lastReqId.equals(phoneReqId)) return;
         String where = COLUMN_REQ_ID + "='" + phoneReqId+"'";
-        String[] projection = {
-                ReqEntry.COLUMN_REQ_ID,
-                ReqEntry.COLUMN_ALIAS,
-                ReqEntry.COLUMN_REQ_SMS_STATUS,
-                ReqEntry.COLUMN_JSON_STATUS
-        };
-        Cursor cursor = mDb.query(ReqEntry.TABLE_NAME, projection, where, null, null, null, null);
-        while (cursor.moveToNext()) {
-            try {
-                String smsStatus = cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_SMS_STATUS));
-                if (smsStatus.contains("-2")) {
-                    Log.i(LOG_TAG, cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_ALIAS)) + " smsStatus -2, exiting");
-                    return;
-                }
 
-                if (smsStatus.contains("-1") && (phoneReqStatus!="-2")) {
-                    Log.i(LOG_TAG, cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_ALIAS)) + " smsStatus -1 and next not -2, exiting");
-                    return;
-                }
+//        if (!lastReqId.equals(phoneReqId)) return;
+//        String[] projection = {
+//                ReqEntry.COLUMN_REQ_ID,
+//                ReqEntry.COLUMN_ALIAS,
+//                ReqEntry.COLUMN_REQ_SMS_STATUS,
+//                ReqEntry.COLUMN_JSON_STATUS
+//        };
+//        Cursor cursor = mDb.query(ReqEntry.TABLE_NAME, projection, where, null, null, null, null);
+//        while (cursor.moveToNext()) {
+//            try {
+//                String smsStatus = cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_SMS_STATUS));
+//                if (smsStatus.contains("-2")) {
+//                    Log.i(LOG_TAG, cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_ALIAS)) + " smsStatus -2, exiting");
+//                    return;
+//                }
+//
+//                if (smsStatus.contains("-1") && (phoneReqStatus!="-2")) {
+//                    Log.i(LOG_TAG, cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_ALIAS)) + " smsStatus -1 and next not -2, exiting");
+//                    return;
+//                }
+//
+//            } catch (Exception e) {
+//                Log.i(LOG_TAG, "Exception checking sms status in db " + e.toString());
+//            }
+//        }
 
-            } catch (Exception e) {
-                Log.i(LOG_TAG, "Exception checking sms status in db " + e.toString());
-            }
-        }
-        Log.i(LOG_TAG, "where to update =  " + where);
+//        Log.i(LOG_TAG, "where to update =  " + where);
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_REQ_SMS_STATUS, phoneReqStatus);
         MainActivity.mDb.update(ReqContract.ReqEntry.TABLE_NAME, cv, where, null );

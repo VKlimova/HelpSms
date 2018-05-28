@@ -25,8 +25,8 @@
     <string name="telnumTxt">и номер телефона</string>
     <string name="codeTxt">Введите код</string>
     <string name="submenuTxt">Выберите действие</string>
-    <string name="default_alias">Вася</string>
-    <string name="json1">+79039606073</string>
+    <string name="default_alias">Вика</string>
+    <string name="json1">+79670430004</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <!-- SMS Manager messages -->
     <string name="smsMgr">SMS sending</string>
