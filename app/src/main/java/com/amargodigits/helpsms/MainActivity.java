@@ -358,8 +358,8 @@ public static void doGridView(JsonReq jsonReq){
 
                 PhoneReqDbHelper.updatePhoneReqStatus(extraReqId, resultCode);
                 Log.i(LOG_TAG, "SMS Sending -->  " + resultCode + " : " + textCode + " " + extraReqId + " " + reqCode + " extraReqId=" + extraReqId);
-                Toast.makeText(mContext, resultCode+ " : " + textCode + " " + extraReqId + " " + reqCode, Toast.LENGTH_LONG).show();
-
+//                Toast.makeText(mContext, resultCode+ " : " + textCode + " " + extraReqId + " " + reqCode, Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, textCode, Toast.LENGTH_LONG).show();
             }
         }, new IntentFilter(SENT));
 
@@ -391,7 +391,8 @@ public static void doGridView(JsonReq jsonReq){
 
                 PhoneReqDbHelper.updatePhoneReqStatus(extraReqId, resultCode);
                 Log.i(LOG_TAG, "SMS Delivery  -->  " + resultCode + " : " + textCode + " " + extraReqId + " " + reqCode);
-                Toast.makeText(mContext, textCode+ " " + extraReqId + " " + reqCode, Toast.LENGTH_LONG).show();
+//                Toast.makeText(mContext, textCode+ " " + extraReqId + " " + reqCode, Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, textCode, Toast.LENGTH_LONG).show();
             }
         }, new IntentFilter(DELIVERED));
 

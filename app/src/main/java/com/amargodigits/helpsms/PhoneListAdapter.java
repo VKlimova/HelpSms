@@ -125,17 +125,19 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
         } catch (Exception e) {
             Log.i(LOG_TAG, "Sms timestsmp exception :" + e.toString());
         }
-        String jStatusCode = "0";
 
         try {
             holder.alias.setText(currentPhReq.getAlias() + "\n" + currentPhReq.getReqId());
         } catch (Exception e) {
         }
+
+        String jStatusCode = "0";
         try {
             jStatusCode = currentPhReq.getJsonStatus();
         } catch (Exception e) {
             jStatusCode = "0";
         }
+if (jStatusCode.length()==0){jStatusCode = "0";}
 
         String jsonDateTime = "";
         if (currentPhReq.getJsonTimestamp().length()> 0) {
