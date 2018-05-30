@@ -127,7 +127,7 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
         }
 
         try {
-            holder.alias.setText(currentPhReq.getAlias() + "\n" + currentPhReq.getReqId());
+            holder.alias.setText(currentPhReq.getAlias()); // + "\n" + currentPhReq.getReqId());
         } catch (Exception e) {
         }
 
@@ -270,8 +270,12 @@ if (jStatusCode.length()==0){jStatusCode = "0";}
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mContext.getString(R.string.share_link) + reqId));
-                getContext().startActivity(browserIntent);
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mContext.getString(R.string.share_link) + reqId));
+//                getContext().startActivity(browserIntent);
+                Intent webviewIntent = new Intent(mContext, WebViewActivity.class );
+                String url = Uri.parse(mContext.getString(R.string.share_link) + reqId).toString();
+                webviewIntent.putExtra("url", url);
+                getContext().startActivity(webviewIntent);
             }
         });
     }

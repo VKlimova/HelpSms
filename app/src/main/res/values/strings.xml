@@ -55,11 +55,12 @@
     <string name="share_link">https://couchdb.cloudno.de/finder/s/show.html?</string>
     <string name="get_link">https://couchdb.cloudno.de/finder/</string>
 
-<string name="about">"HelpSms" (с) AmargoDigits</string>
+    <string name="about">"HelpSms" (с) AmargoDigits</string>
     <string name="help_string">Нажмите на оранжевый конвертик, введите номер телефона.
         Приложение отправит СМС со ссылкой на страницу для определения GPS-координат.
         Когда абонент откроет ссылку, ему будет необходимо подтвердить разрешение на доступ к GPS в браузере.
         После этого его координаты будут зафиксированы.
         На экране приложения можно наблюдать статус отправки СМС и действий абонента.
     </string>
+    <string name="title_activity_web_view">Инфо сводка</string>
 </resources>
