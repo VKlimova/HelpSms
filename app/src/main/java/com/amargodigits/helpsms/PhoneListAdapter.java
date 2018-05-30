@@ -90,7 +90,7 @@ public class PhoneListAdapter extends ArrayAdapter<PhoneReq> {
 
         ViewHolder holder = null;
         currentPhReq = getItem(position);
-Log.i(LOG_TAG, "currentPhReq " + currentPhReq.getJsonStatus() + " " + currentPhReq.getJsonTimestamp());
+// Log.i(LOG_TAG, "currentPhReq " + currentPhReq.getJsonStatus() + " " + currentPhReq.getJsonTimestamp());
         if (convertView == null) {
             // If it's not recycled, initialize some attributes
             LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
@@ -116,24 +116,35 @@ Log.i(LOG_TAG, "currentPhReq " + currentPhReq.getJsonStatus() + " " + currentPhR
             holder.phTitle.setText(currentPhReq.getPhoneNumber());
         } catch (Exception e) {
         }
+
+        String reqDateTime = "";
+
         try {
-            String reqDateTime = dateTimeString(Long.parseLong(currentPhReq.getReqDate()));
+            reqDateTime = dateTimeString(Long.parseLong(currentPhReq.getReqDate()));
             holder.phDate.setText(mContext.getString(R.string.smsMgr) + ": " + reqDateTime);
         } catch (Exception e) {
             Log.i(LOG_TAG, "Sms timestsmp exception :" + e.toString());
         }
-        String jStatusCode= "0";
+        String jStatusCode = "0";
 
         try {
-            holder.alias.setText(currentPhReq.getAlias());
+            holder.alias.setText(currentPhReq.getAlias() + "\n" + currentPhReq.getReqId());
         } catch (Exception e) {
         }
         try {
             jStatusCode = currentPhReq.getJsonStatus();
         } catch (Exception e) {
-            jStatusCode="0";
+            jStatusCode = "0";
         }
 
+        String jsonDateTime = "";
+        if (currentPhReq.getJsonTimestamp().length()> 0) {
+            try {
+                jsonDateTime = dateTimeString(Long.parseLong(currentPhReq.getJsonTimestamp()));
+            } catch (Exception e) {
+                Log.i(LOG_TAG, " jsonDateTime Exception " + e.toString());
+            }
+        }
         String smsStatus = "";
         try {
             smsStatus = currentPhReq.getReqSmsStatus();
@@ -147,8 +158,10 @@ Log.i(LOG_TAG, "currentPhReq " + currentPhReq.getJsonStatus() + " " + currentPhR
                 break;
             case "200":
                 holder.smsBtn.setImageResource(R.drawable.ic_status_wait);
-                holder.smsStatus.setText(mContext.getString(R.string.Imported));
-                jsonStatus(jStatusCode, holder.smsBtn, holder.jsonStatus, holder.jsonTimestamp);
+                holder.smsStatus.setText("");
+                holder.phDate.setText(mContext.getString(R.string.Imported) + ": " + reqDateTime);
+                jsonStatus(jStatusCode, holder.smsBtn, holder.jsonStatus, holder.jsonTimestamp, jsonDateTime);
+
                 break;
 //            case "SMS sent":
 //                holder.smsBtn.setImageResource(R.drawable.ic_status_ok);
@@ -177,14 +190,14 @@ Log.i(LOG_TAG, "currentPhReq " + currentPhReq.getJsonStatus() + " " + currentPhR
             case "-1": // sms sent
                 holder.smsStatus.setText("SMS status: " + mContext.getString(R.string.RESULT_OK_SENT));
                 holder.smsBtn.setImageResource(R.drawable.ic_status_ok);
-                jsonStatus(jStatusCode, holder.smsBtn, holder.jsonStatus, holder.jsonTimestamp);
+                jsonStatus(jStatusCode, holder.smsBtn, holder.jsonStatus, holder.jsonTimestamp, jsonDateTime);
 //                Log.i(LOG_TAG, "  S M S    S T A T U S    -1  ============================");
                 break;
 
             case "-2":       // delivered sms
                 holder.smsStatus.setText("SMS status: " + mContext.getString(R.string.RESULT_OK_DELIVERED));
                 holder.smsBtn.setImageResource(R.drawable.ic_status_ok);
-                jsonStatus(jStatusCode, holder.smsBtn, holder.jsonStatus, holder.jsonTimestamp);
+                jsonStatus(jStatusCode, holder.smsBtn, holder.jsonStatus, holder.jsonTimestamp, jsonDateTime);
 //                Log.i(LOG_TAG, "  S M S    S T A T U S    -2  ============================");
                 break;
 
@@ -205,7 +218,7 @@ Log.i(LOG_TAG, "currentPhReq " + currentPhReq.getJsonStatus() + " " + currentPhR
 
     public String dateTimeString(Long dateTimeLong) {
         Calendar calendar = Calendar.getInstance();
-        if ((dateTimeLong==null) || (dateTimeLong==0) || (dateTimeLong.equals(null))) return "";
+        if ((dateTimeLong == null) || (dateTimeLong == 0) || (dateTimeLong.equals(null))) return "";
         calendar.setTimeInMillis(dateTimeLong);
 //    int mYear = calendar.get(Calendar.YEAR);
 //    int mMonth = calendar.get(Calendar.MONTH);
@@ -222,7 +235,7 @@ Log.i(LOG_TAG, "currentPhReq " + currentPhReq.getJsonStatus() + " " + currentPhR
         return dateTimeString;
     }
 
-    public void jsonStatus(String jStatusCode, ImageButton smsBtn, TextView jsonStatus, TextView jsonTimestamp) {
+    public void jsonStatus(String jStatusCode, ImageButton smsBtn, TextView jsonStatus, TextView tvJsonTimestamp, String strJsonTimestamp) {
         String jStatusStr = "";
         switch (jStatusCode) {
             case "0":
@@ -242,22 +255,14 @@ Log.i(LOG_TAG, "currentPhReq " + currentPhReq.getJsonStatus() + " " + currentPhR
                 smsBtn.setImageResource(R.drawable.ic_status_error);
                 break;
         }
-
-        try {
-            String jsonDateTime = dateTimeString(Long.parseLong(currentPhReq.getJsonTimestamp()));
-            jsonTimestamp.setText(mContext.getString(R.string.jsonSite) + ": " + jsonDateTime);
-        } catch (Exception e) {
-//            Log.i(LOG_TAG, " jsonDateTime Exception " + e.toString());
-        }
+//Log.i(LOG_TAG, "strJsonTimestamp = " + strJsonTimestamp);
+            tvJsonTimestamp.setText(mContext.getString(R.string.jsonSite) + ": " + strJsonTimestamp);
 
         if (jStatusCode.length() > 0) {
             jsonStatus.setText(jStatusStr);
         }
 
     }
-
-    ;
-
 
     private void setOnMapClick(final View btn, final String phNum, final String reqId) {
         btn.setOnClickListener(new View.OnClickListener() {
@@ -325,13 +330,13 @@ Log.i(LOG_TAG, "currentPhReq " + currentPhReq.getJsonStatus() + " " + currentPhR
                                     break;
                                 case 1:
 //                                    doShare(phoneNum, mContext.getString(R.string.lazyhome_link) + "show/?key=" + reqId + "&ph=" + phoneNum);
-                                    doShare(phoneNum, alias + ": " + phoneNum + " "+ mContext.getString(R.string.share_link) + reqId);
+                                    doShare(phoneNum, alias + ": " + phoneNum + " " + mContext.getString(R.string.share_link) + reqId);
                                     break;
                                 case 2:
                                     deletePhoneReqID(reqId);
                                     break;
                                 case 3:
-                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mContext.getString(R.string.share_link)  + reqId));
+                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mContext.getString(R.string.share_link) + reqId));
                                     mContext.startActivity(browserIntent);
                                     break;
                             }

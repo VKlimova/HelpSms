@@ -258,7 +258,7 @@ public static void doGridView(JsonReq jsonReq){
                     String codeStr = Codetxt.getText().toString();
                     Long curTime = Calendar.getInstance().getTimeInMillis();
 
-                    PhoneReq curPhoneReq = new PhoneReq("", "", "", "", Long.toString(curTime), "1", "200", "", "0");
+                    PhoneReq curPhoneReq = new PhoneReq(codeStr, "", "", "", Long.toString(curTime), "1", "200", "", "0");
                     PhoneReqDbHelper.addPhoneReqId(curPhoneReq, codeStr);
 
                 }

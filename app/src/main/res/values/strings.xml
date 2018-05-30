@@ -29,6 +29,7 @@
     <string name="json1">+79670430004</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <!-- SMS Manager messages -->
+
     <string name="smsMgr">SMS sending</string>
     <string name="Initial">Sending...</string>
     <string name="Imported">Imported</string>

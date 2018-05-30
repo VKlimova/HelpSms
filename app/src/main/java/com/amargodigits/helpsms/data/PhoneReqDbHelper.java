@@ -101,14 +101,15 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
                             cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_JSON_STATUS))
                             )
                     );
-//                    Log.i(LOG_TAG, "makePhoneReqArrayFromSQLite: " +
-//                            cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_ALIAS)) +" " +
-//                            cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_PHONE_NUMBER)) +
-////                            "-" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_ID))+ "-" +
-//                            " json status=" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_JSON_STATUS))+ " " +
-//                            " sms status=" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_SMS_STATUS))+ " "
-////                            + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_JSON_TIMESTAMP))
-//                    );
+                    Log.i(LOG_TAG, "makePhoneReqArrayFromSQLite: " +
+                            cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_ALIAS)) +" " +
+                            cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_PHONE_NUMBER)) +
+                            "-" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_ID))+ "-" +
+                            " json status=" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_JSON_STATUS))+ " " +
+                            " json timestamp=" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_JSON_TIMESTAMP))+ " " +
+                            " sms status=" + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_REQ_SMS_STATUS))+ " "
+                            + cursor.getString(cursor.getColumnIndex(ReqEntry.COLUMN_JSON_TIMESTAMP))
+                    );
                 } catch (Exception e) {
                     Log.i(LOG_TAG, "makePhoneReqArrayFromSQLite Exception: " + e.toString());
                 }
@@ -168,9 +169,9 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_DATE, phoneReq.getReqDate());
         cv.put(COLUMN_REQ_COUNT, phoneReq.getReqCount());
         cv.put(COLUMN_REQ_SMS_STATUS, phoneReq.getReqSmsStatus());
-        cv.put(COLUMN_JSON_STATUS, "");
-        cv.put(COLUMN_JSON_TIMESTAMP, "");
-        Log.i(LOG_TAG, "Adding " + phoneReq.getAlias() + " " +  phoneReq.getPhoneNumber() + " reqId=-" + reqId + "-");
+        cv.put(COLUMN_JSON_STATUS, phoneReq.getJsonStatus());
+        cv.put(COLUMN_JSON_TIMESTAMP, phoneReq.getJsonTimestamp());
+        Log.i(LOG_TAG, "addPhoneReqId Adding " + phoneReq.getAlias() + " " +  phoneReq.getPhoneNumber() + " reqId=-" + reqId + "-" + " JSon timestamp="+phoneReq.getJsonTimestamp() );
         MainActivity.mDb.insert(ReqContract.ReqEntry.TABLE_NAME, null, cv);
         makePhoneReqArrayFromSQLite(mDb);
         mAdapter.notifyDataSetChanged();
