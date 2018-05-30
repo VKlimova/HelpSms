@@ -18,6 +18,7 @@ import static com.amargodigits.helpsms.MainActivity.lastReqId;
 import static com.amargodigits.helpsms.MainActivity.mAdapter;
 import static com.amargodigits.helpsms.MainActivity.mDb;
 import static com.amargodigits.helpsms.MainActivity.reqList;
+import static com.amargodigits.helpsms.MainActivity.updateGridFromJson;
 import static com.amargodigits.helpsms.data.ReqContract.*;
 import static com.amargodigits.helpsms.data.ReqContract.ReqEntry.COLUMN_ALIAS;
 import static com.amargodigits.helpsms.data.ReqContract.ReqEntry.COLUMN_DATE;
@@ -174,6 +175,9 @@ public class PhoneReqDbHelper extends SQLiteOpenHelper {
         Log.i(LOG_TAG, "addPhoneReqId Adding " + phoneReq.getAlias() + " " +  phoneReq.getPhoneNumber() + " reqId=-" + reqId + "-" + " JSon timestamp="+phoneReq.getJsonTimestamp() );
         MainActivity.mDb.insert(ReqContract.ReqEntry.TABLE_NAME, null, cv);
         makePhoneReqArrayFromSQLite(mDb);
+
+        updateGridFromJson();
+
         mAdapter.notifyDataSetChanged();
         return;
     }

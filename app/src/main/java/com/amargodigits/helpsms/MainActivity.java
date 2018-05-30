@@ -105,13 +105,13 @@ public class MainActivity extends AppCompatActivity {
     //
     // Creating array from Json and updating database
     //
-    public void updateGridFromJson(){
+    public static void updateGridFromJson(){
         Log.i(LOG_TAG, "updateGridFromJson reqList.size()=" + reqList.size());
         for (int i = 0; (i < reqList.size()); i++)
             try {
             Log.i(LOG_TAG, "updateGridFromJson i=" + i);
             String key = reqList.get(i).getReqId();
-            NetworkUtils.LoadJsonReqTask mAsyncTasc = new NetworkUtils.LoadJsonReqTask(getApplicationContext());
+            NetworkUtils.LoadJsonReqTask mAsyncTasc = new NetworkUtils.LoadJsonReqTask(mContext);
             mAsyncTasc.execute(key);
         } catch (Exception e) {
                 mSwipeRefreshLayout.setRefreshing(false);
