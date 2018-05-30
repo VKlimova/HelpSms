@@ -26,6 +26,7 @@ public class WebViewActivity extends AppCompatActivity {
 Log.i(LOG_TAG, "WebViewActivity url = " + url );
         WebView myWebView = (WebView) findViewById(R.id.webview);
         WebSettings webSettings = myWebView.getSettings();
+        webSettings.setUserAgentString(getString(R.string.app_name)+ "/" + BuildConfig.VERSION_NAME);
 
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
